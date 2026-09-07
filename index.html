@@ -1,169 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>BabiGames</title>
-
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="manifest" href="manifest.json">
-
-    <meta name="theme-color" content="#111827">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080b16">
+<meta name="description" content="BabiGames — joue à tes classiques préférés.">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/style.css">
+<title>BabiGames</title>
 </head>
-
 <body>
+<div id="toast"></div>
 
-    <!-- LOGIN -->
-    <section id="loginPage" class="auth-page">
+<section id="auth" class="screen">
+  <div class="aurora a1"></div><div class="aurora a2"></div>
+  <div class="auth-wrap">
+    <div class="brand big"><span class="brand-mark">✦</span><span>Babi<span>Games</span></span></div>
+    <p class="tagline">PLAY • COMPETE • HAVE FUN</p>
+    <div class="auth-card glass">
+      <div class="tabs"><button id="tabLogin" class="active">Connexion</button><button id="tabSignup">Créer un compte</button></div>
+      <form id="loginForm">
+        <label>Pseudo<input id="loginUser" required autocomplete="username" placeholder="Ton pseudo"></label>
+        <label>Mot de passe<input id="loginPass" type="password" required autocomplete="current-password" placeholder="••••••••"></label>
+        <button class="primary wide" type="submit">Entrer dans l'arène <span>→</span></button>
+      </form>
+      <form id="signupForm" class="hidden">
+        <label>Pseudo<input id="signupUser" required minlength="3" maxlength="18" placeholder="Ex. BabiPlayer"></label>
+        <label>Mot de passe<input id="signupPass" type="password" required minlength="4" placeholder="4 caractères minimum"></label>
+        <button class="primary wide" type="submit">Créer mon profil <span>✦</span></button>
+      </form>
+      <p id="authMsg" class="msg"></p>
+    </div>
+    <div class="mini-note">⚡ 4 jeux · 📱 Responsive · 📴 Offline</div>
+  </div>
+</section>
 
-        <div class="auth-card">
+<section id="app" class="hidden">
+<header class="topbar glass">
+  <button class="brand" data-view="home"><span class="brand-mark">✦</span><span>Babi<span>Games</span></span></button>
+  <nav>
+    <button data-view="home" class="nav active">Accueil</button>
+    <button data-view="games" class="nav">Jeux</button>
+    <button data-view="profile" class="nav">Profil</button>
+  </nav>
+  <div class="user-chip"><span id="avatar">B</span><b id="navUser">Player</b><button id="logout" title="Déconnexion">↪</button></div>
+</header>
 
-            <div class="logo">
-                🎮
-            </div>
+<main>
+<section id="homeView" class="view">
+  <div class="hero">
+    <div>
+      <span class="eyebrow">BIENVENUE DANS L'ARÈNE</span>
+      <h1>Ton prochain<br><em>high score</em> t'attend.</h1>
+      <p>Des classiques revisités avec une expérience rapide, fluide et fun.</p>
+      <button class="primary" data-view="games">Jouer maintenant <span>→</span></button>
+    </div>
+    <div class="hero-orb"><div class="orb-inner">✦</div></div>
+  </div>
+  <div class="section-head"><div><span class="eyebrow">ARÈNE</span><h2>Choisis ton jeu</h2></div><button class="ghost" data-view="games">Voir tout →</button></div>
+  <div id="homeGames" class="game-grid"></div>
+</section>
 
-            <h1>BabiGames</h1>
-            <p class="subtitle">Joue. Défie. Gagne.</p>
+<section id="gamesView" class="view hidden">
+  <div class="page-title"><span class="eyebrow">GAME CENTER</span><h1>Tous les jeux</h1><p>Choisis ton terrain de jeu.</p></div>
+  <div id="allGames" class="game-grid"></div>
+</section>
 
-            <div id="loginForm">
+<section id="profileView" class="view hidden">
+  <div class="profile-card glass">
+    <div id="profileAvatar" class="profile-avatar">B</div>
+    <div><span class="eyebrow">TON PROFIL</span><h1 id="profileName">Player</h1><p>Membre de BabiGames</p></div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="section-head"><div><span class="eyebrow">PERSONNEL</span><h2>Meilleurs scores</h2></div></div>
+  <div id="scoreList" class="score-list"></div>
+</section>
 
-                <h2>Connexion</h2>
+<section id="gameView" class="view hidden">
+  <div class="gamebar"><button id="backGames" class="ghost">← Jeux</button><div><span id="gameEyebrow" class="eyebrow">GAME</span><h1 id="gameTitle">Jeu</h1></div><div id="gameScore" class="score-pill">Score 0</div></div>
+  <div id="gameMount" class="game-mount glass"></div>
+</section>
+</main>
+</section>
 
-                <input
-                    type="text"
-                    id="loginUsername"
-                    placeholder="Nom d'utilisateur"
-                    autocomplete="username"
-                >
-
-                <input
-                    type="password"
-                    id="loginPassword"
-                    placeholder="Mot de passe"
-                    autocomplete="current-password"
-                >
-
-                <button onclick="login()">
-                    Se connecter
-                </button>
-
-                <p id="loginMessage"></p>
-
-                <p class="switch-auth">
-                    Pas encore de compte ?
-                    <button class="link-button" onclick="showRegister()">
-                        Créer un compte
-                    </button>
-                </p>
-
-            </div>
-
-
-            <!-- INSCRIPTION -->
-
-            <div id="registerForm" class="hidden">
-
-                <h2>Créer un compte</h2>
-
-                <input
-                    type="text"
-                    id="registerUsername"
-                    placeholder="Nom d'utilisateur"
-                    autocomplete="username"
-                >
-
-                <input
-                    type="password"
-                    id="registerPassword"
-                    placeholder="Mot de passe"
-                    autocomplete="new-password"
-                >
-
-                <input
-                    type="password"
-                    id="registerPasswordConfirm"
-                    placeholder="Confirmer le mot de passe"
-                    autocomplete="new-password"
-                >
-
-                <button onclick="register()">
-                    Créer mon compte
-                </button>
-
-                <p id="registerMessage"></p>
-
-                <p class="switch-auth">
-                    Déjà un compte ?
-                    <button class="link-button" onclick="showLogin()">
-                        Se connecter
-                    </button>
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- APPLICATION -->
-
-    <section id="appPage" class="hidden">
-
-        <header class="navbar">
-
-            <div class="brand">
-                🎮 BabiGames
-            </div>
-
-            <div class="user-area">
-                <span id="welcomeUser"></span>
-
-                <button onclick="logout()" class="logout-button">
-                    Déconnexion
-                </button>
-            </div>
-
-        </header>
-
-
-        <main class="home">
-
-            <h1>Bienvenue sur BabiGames 👋</h1>
-
-            <p>Choisis ton jeu</p>
-
-            <div class="games-grid">
-
-                <button class="game-card">
-                    ♟️
-                    <span>Échecs</span>
-                </button>
-
-                <button class="game-card">
-                    ⚫
-                    <span>Dames</span>
-                </button>
-
-                <button class="game-card">
-                    🐍
-                    <span>Snake</span>
-                </button>
-
-                <button class="game-card">
-                    💣
-                    <span>Démineur</span>
-                </button>
-
-            </div>
-
-        </main>
-
-    </section>
-
-
-    <script src="js/app.js"></script>
-
+<script src="js/app.js"></script>
+<script src="js/games.js"></script>
 </body>
 </html>

@@ -1,277 +1,40 @@
-// ===============================
-// BabiGames - Authentification
-// ===============================
-
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const currentUser = localStorage.getItem("babiGamesCurrentUser");
-
-    if (currentUser) {
-        showApp(currentUser);
-    } else {
-        showLogin();
-    }
-
-});
-
-
-// ===============================
-// AFFICHER LOGIN
-// ===============================
-
-function showLogin() {
-
-    document.getElementById("loginPage").classList.remove("hidden");
-
-    document.getElementById("appPage").classList.add("hidden");
-
-    document.getElementById("loginForm").classList.remove("hidden");
-
-    document.getElementById("registerForm").classList.add("hidden");
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const games=[
+ {id:"chess",icon:"♟",name:"Échecs",desc:"Stratégie classique, duel local."},
+ {id:"checkers",icon:"●",name:"Dames",desc:"Prends tout avant ton adversaire."},
+ {id:"snake",icon:"🐍",name:"Snake",desc:"Mange, grandis, bats ton record."},
+ {id:"minesweeper",icon:"💣",name:"Démineur",desc:"Révèle les cases sans exploser."}
+];
+let currentUser=localStorage.getItem("bg_current");
+function users(){return JSON.parse(localStorage.getItem("bg_users")||"{}")}
+function saveUsers(x){localStorage.setItem("bg_users",JSON.stringify(x))}
+function toast(t){let e=$("#toast");e.textContent=t;e.className="show";setTimeout(()=>e.className="",2200)}
+function showAuth(login=true){$("#auth").classList.remove("hidden");$("#app").classList.add("hidden");$("#loginForm").classList.toggle("hidden",!login);$("#signupForm").classList.toggle("hidden",login);$("#tabLogin").classList.toggle("active",login);$("#tabSignup").classList.toggle("active",!login)}
+function enterApp(){if(!currentUser)return;$("#auth").classList.add("hidden");$("#app").classList.remove("hidden");$("#navUser").textContent=currentUser;$("#avatar").textContent=currentUser[0].toUpperCase();renderCards();renderProfile();showView("home")}
+function showView(v){
+ $$(".view").forEach(x=>x.classList.add("hidden")); $(`#${v}View`).classList.remove("hidden");
+ $$(".nav").forEach(x=>x.classList.toggle("active",x.dataset.view===v));
+ window.scrollTo(0,0);
 }
-
-
-// ===============================
-// AFFICHER INSCRIPTION
-// ===============================
-
-function showRegister() {
-
-    document.getElementById("loginForm").classList.add("hidden");
-
-    document.getElementById("registerForm").classList.remove("hidden");
-
-    clearMessages();
+function renderCards(){
+ const html=games.map(g=>`<button class="game-card" data-game="${g.id}"><div class="game-icon">${g.icon}</div><h3>${g.name}</h3><p>${g.desc}</p><span class="play">→</span></button>`).join("");
+ $("#homeGames").innerHTML=html;$("#allGames").innerHTML=html;
+ $$(".game-card").forEach(b=>b.onclick=()=>startGame(b.dataset.game));
 }
-
-
-// ===============================
-// REVENIR LOGIN
-// ===============================
-
-function showLogin() {
-
-    document.getElementById("loginForm").classList.remove("hidden");
-
-    document.getElementById("registerForm").classList.add("hidden");
-
-    clearMessages();
+function getMe(){let u=users();return u[currentUser]}
+function renderProfile(){
+ let me=getMe()||{scores:{}};$("#profileName").textContent=currentUser;$("#profileAvatar").textContent=currentUser[0].toUpperCase();
+ let scores=me.scores||{};let total=Object.values(scores).reduce((a,b)=>a+b,0);
+ $("#stats").innerHTML=`<div class="stat"><b>${total}</b><span>Score total</span></div><div class="stat"><b>${games.length}</b><span>Jeux disponibles</span></div><div class="stat"><b>∞</b><span>Parties possibles</span></div>`;
+ $("#scoreList").innerHTML=games.map(g=>`<div class="score-row"><span>${g.icon} ${g.name}</span><b>${scores[g.id]||0}</b></div>`).join("");
 }
-
-
-// ===============================
-// INSCRIPTION
-// ===============================
-
-function register() {
-
-    const username =
-        document.getElementById("registerUsername").value.trim();
-
-    const password =
-        document.getElementById("registerPassword").value;
-
-    const confirmPassword =
-        document.getElementById("registerPasswordConfirm").value;
-
-    const message =
-        document.getElementById("registerMessage");
-
-
-    if (!username || !password || !confirmPassword) {
-
-        message.textContent =
-            "Veuillez remplir tous les champs.";
-
-        return;
-    }
-
-
-    if (password !== confirmPassword) {
-
-        message.textContent =
-            "Les mots de passe ne correspondent pas.";
-
-        return;
-    }
-
-
-    if (password.length < 4) {
-
-        message.textContent =
-            "Le mot de passe doit contenir au moins 4 caractères.";
-
-        return;
-    }
-
-
-    const users =
-        JSON.parse(localStorage.getItem("babiGamesUsers") || "[]");
-
-
-    const existingUser =
-        users.find(user => user.username === username);
-
-
-    if (existingUser) {
-
-        message.textContent =
-            "Ce nom d'utilisateur existe déjà.";
-
-        return;
-    }
-
-
-    const newUser = {
-
-        username: username,
-
-        password: password,
-
-        scores: {
-
-            chess: 0,
-
-            checkers: 0,
-
-            snake: 0,
-
-            minesweeper: 0
-
-        }
-
-    };
-
-
-    users.push(newUser);
-
-
-    localStorage.setItem(
-        "babiGamesUsers",
-        JSON.stringify(users)
-    );
-
-
-    localStorage.setItem(
-        "babiGamesCurrentUser",
-        username
-    );
-
-
-    showApp(username);
-}
-
-
-// ===============================
-// CONNEXION
-// ===============================
-
-function login() {
-
-    const username =
-        document.getElementById("loginUsername").value.trim();
-
-    const password =
-        document.getElementById("loginPassword").value;
-
-    const message =
-        document.getElementById("loginMessage");
-
-
-    const users =
-        JSON.parse(localStorage.getItem("babiGamesUsers") || "[]");
-
-
-    const user =
-        users.find(
-            user =>
-                user.username === username &&
-                user.password === password
-        );
-
-
-    if (!user) {
-
-        message.textContent =
-            "Nom d'utilisateur ou mot de passe incorrect.";
-
-        return;
-    }
-
-
-    localStorage.setItem(
-        "babiGamesCurrentUser",
-        username
-    );
-
-
-    showApp(username);
-}
-
-
-// ===============================
-// AFFICHER APPLICATION
-// ===============================
-
-function showApp(username) {
-
-    document.getElementById("loginPage").classList.add("hidden");
-
-    document.getElementById("appPage").classList.remove("hidden");
-
-    document.getElementById("welcomeUser").textContent =
-        "👤 " + username;
-}
-
-
-// ===============================
-// DÉCONNEXION
-// ===============================
-
-function logout() {
-
-    localStorage.removeItem("babiGamesCurrentUser");
-
-    showLogin();
-
-    document.getElementById("loginUsername").value = "";
-
-    document.getElementById("loginPassword").value = "";
-}
-
-
-// ===============================
-// MESSAGES
-// ===============================
-
-function clearMessages() {
-
-    document.getElementById("loginMessage").textContent = "";
-
-    document.getElementById("registerMessage").textContent = "";
-}
-
-
-// ===============================
-// SERVICE WORKER
-// ===============================
-
-if ("serviceWorker" in navigator) {
-
-    window.addEventListener("load", () => {
-
-        navigator.serviceWorker.register(
-            "service-worker.js"
-        ).catch(error => {
-
-            console.error(
-                "Service Worker error:",
-                error
-            );
-
-        });
-
-    });
-
-}
+function setScore(game,score){let u=users();if(!u[currentUser])return;if(score>(u[currentUser].scores[game]||0)){u[currentUser].scores[game]=score;saveUsers(u);renderProfile();toast("🏆 Nouveau record !")}}
+function startGame(id){showView("game");let g=games.find(x=>x.id===id);$("#gameTitle").textContent=g.name;$("#gameEyebrow").textContent="GAME CENTER";$("#gameScore").textContent="Score 0";GameEngine[id]($("#gameMount"),score=>$("#gameScore").textContent="Score "+score, s=>setScore(id,s))}
+$("#tabLogin").onclick=()=>showAuth(true);$("#tabSignup").onclick=()=>showAuth(false);
+$("#loginForm").onsubmit=e=>{e.preventDefault();let u=$("#loginUser").value.trim(),p=$("#loginPass").value,x=users();if(x[u]&&x[u].password===p){currentUser=u;localStorage.setItem("bg_current",u);$("#authMsg").textContent="";enterApp()}else $("#authMsg").textContent="Pseudo ou mot de passe incorrect."};
+$("#signupForm").onsubmit=e=>{e.preventDefault();let u=$("#signupUser").value.trim(),p=$("#signupPass").value,x=users();if(x[u])return $("#authMsg").textContent="Ce pseudo existe déjà.";x[u]={password:p,scores:{}};saveUsers(x);currentUser=u;localStorage.setItem("bg_current",u);enterApp()};
+$("#logout").onclick=()=>{localStorage.removeItem("bg_current");currentUser=null;showAuth(true);toast("À bientôt 👋")};
+$$("[data-view]").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+$("#backGames").onclick=()=>showView("games");
+if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("service-worker.js").catch(()=>{}));
+if(currentUser)enterApp();else showAuth(true);
