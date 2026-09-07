@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BabiGames</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+
+    <meta name="theme-color" content="#111827">
+</head>
+
+<body>
+
+    <!-- LOGIN -->
+    <section id="loginPage" class="auth-page">
+
+        <div class="auth-card">
+
+            <div class="logo">
+                🎮
+            </div>
+
+            <h1>BabiGames</h1>
+            <p class="subtitle">Joue. Défie. Gagne.</p>
+
+            <div id="loginForm">
+
+                <h2>Connexion</h2>
+
+                <input
+                    type="text"
+                    id="loginUsername"
+                    placeholder="Nom d'utilisateur"
+                    autocomplete="username"
+                >
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Mot de passe"
+                    autocomplete="current-password"
+                >
+
+                <button onclick="login()">
+                    Se connecter
+                </button>
+
+                <p id="loginMessage"></p>
+
+                <p class="switch-auth">
+                    Pas encore de compte ?
+                    <button class="link-button" onclick="showRegister()">
+                        Créer un compte
+                    </button>
+                </p>
+
+            </div>
+
+
+            <!-- INSCRIPTION -->
+
+            <div id="registerForm" class="hidden">
+
+                <h2>Créer un compte</h2>
+
+                <input
+                    type="text"
+                    id="registerUsername"
+                    placeholder="Nom d'utilisateur"
+                    autocomplete="username"
+                >
+
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Mot de passe"
+                    autocomplete="new-password"
+                >
+
+                <input
+                    type="password"
+                    id="registerPasswordConfirm"
+                    placeholder="Confirmer le mot de passe"
+                    autocomplete="new-password"
+                >
+
+                <button onclick="register()">
+                    Créer mon compte
+                </button>
+
+                <p id="registerMessage"></p>
+
+                <p class="switch-auth">
+                    Déjà un compte ?
+                    <button class="link-button" onclick="showLogin()">
+                        Se connecter
+                    </button>
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- APPLICATION -->
+
+    <section id="appPage" class="hidden">
+
+        <header class="navbar">
+
+            <div class="brand">
+                🎮 BabiGames
+            </div>
+
+            <div class="user-area">
+                <span id="welcomeUser"></span>
+
+                <button onclick="logout()" class="logout-button">
+                    Déconnexion
+                </button>
+            </div>
+
+        </header>
+
+
+        <main class="home">
+
+            <h1>Bienvenue sur BabiGames 👋</h1>
+
+            <p>Choisis ton jeu</p>
+
+            <div class="games-grid">
+
+                <button class="game-card">
+                    ♟️
+                    <span>Échecs</span>
+                </button>
+
+                <button class="game-card">
+                    ⚫
+                    <span>Dames</span>
+                </button>
+
+                <button class="game-card">
+                    🐍
+                    <span>Snake</span>
+                </button>
+
+                <button class="game-card">
+                    💣
+                    <span>Démineur</span>
+                </button>
+
+            </div>
+
+        </main>
+
+    </section>
+
+
+    <script src="js/app.js"></script>
+
+</body>
+</html>
