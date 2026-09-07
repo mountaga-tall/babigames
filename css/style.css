@@ -1,0 +1,83 @@
+:root {
+    --bg-color: #0f0c29;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-accent: #00f2fe;
+    --text-main: #ffffff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--bg-color), #302b63, #24243e);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow: hidden; /* Empêche le scroll sur PWA */
+}
+
+.app-container { display: flex; flex-direction: column; height: 100vh; }
+
+/* Glassmorphism Classes */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.glass-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 20px;
+    background: rgba(15, 12, 41, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+}
+
+.glass-header h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+button { background: none; border: none; color: white; font-weight: bold; cursor: pointer; padding: 10px; border-radius: 8px; transition: 0.2s; }
+button:active { transform: scale(0.95); background: var(--glass-bg); }
+.btn { border: 1px solid var(--glass-border); padding: 10px 20px; margin-top: 15px; }
+
+/* Views */
+.view { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+.hidden { display: none !important; }
+.active { display: flex; animation: fadeIn 0.4s ease-out; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Menu */
+.menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 600px; }
+.game-card { padding: 25px 15px; text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.game-card:active { transform: scale(0.95); }
+.card-icon { font-size: 3rem; margin-bottom: 10px; }
+.game-card h2 { font-size: 1.2rem; margin-bottom: 5px; }
+.game-card p { font-size: 0.8rem; opacity: 0.7; }
+
+/* Snake */
+canvas { background: rgba(0,0,0,0.4); border-radius: 10px; box-shadow: 0 0 20px rgba(0, 242, 254, 0.2); max-width: 100%; }
+.score-board { padding: 10px 20px; margin-bottom: 20px; font-weight: bold; }
+.controls-hint { margin-top: 15px; opacity: 0.6; font-size: 0.9rem; }
+
+/* Minesweeper */
+#minesweeper-grid { display: grid; background: #222; gap: 2px; padding: 2px; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+.ms-cell { width: 35px; height: 35px; background: #444; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; cursor: pointer; border-radius: 4px; }
+.ms-cell:active { background: #555; }
+.ms-cell.revealed { background: #2a2a2a; box-shadow: inset 0 0 5px rgba(0,0,0,0.8); }
+.ms-cell.mine { background: #ff4757; }
+
+/* Board Games (Chess / Checkers) */
+.board-container { padding: 10px; background: #8b5a2b; border-radius: 8px; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
+.board { display: grid; grid-template-columns: repeat(8, 1fr); width: 320px; height: 320px; border: 2px solid #3e2723; }
+.square { display: flex; justify-content: center; align-items: center; font-size: 2rem; cursor: grab; }
+.square.light { background: #f0d9b5; }
+.square.dark { background: #b58863; color: #fff;}
+.piece { cursor: grab; text-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
+.piece:active { cursor: grabbing; transform: scale(1.1); }
+.checker { width: 80%; height: 80%; border-radius: 50%; box-shadow: inset -3px -3px 5px rgba(0,0,0,0.4), 2px 2px 5px rgba(0,0,0,0.5); }
+.checker.red { background: #c62828; }
+.checker.black { background: #212121; }
+.hint { margin-top: 15px; opacity: 0.7; }

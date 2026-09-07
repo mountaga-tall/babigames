@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BabiGames</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <!-- App Container -->
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <header class="glass-header">
+            <button id="back-btn" class="hidden">◁ Retour</button>
+            <h1>BabiGames</h1>
+            <button id="install-btn" class="hidden">Installer</button>
+        </header>
+
+        <!-- Main Menu -->
+        <main id="menu" class="view active">
+            <div class="menu-grid">
+                <div class="game-card glass" data-game="snake">
+                    <div class="card-icon">🐍</div>
+                    <h2>Snake</h2>
+                    <p>Le classique cyber-néon</p>
+                </div>
+                <div class="game-card glass" data-game="minesweeper">
+                    <div class="card-icon">💣</div>
+                    <h2>Démineur</h2>
+                    <p>Logique et adrénaline</p>
+                </div>
+                <div class="game-card glass" data-game="chess">
+                    <div class="card-icon">♟️</div>
+                    <h2>Échecs</h2>
+                    <p>Stratégie royale</p>
+                </div>
+                <div class="game-card glass" data-game="checkers">
+                    <div class="card-icon">🔴</div>
+                    <h2>Dames</h2>
+                    <p>Anticipation pure</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Game Views -->
+        <section id="snake-view" class="view hidden">
+            <div class="score-board glass">Score: <span id="snake-score">0</span> | Max: <span id="snake-highscore">0</span></div>
+            <canvas id="snake-canvas"></canvas>
+            <div class="controls-hint">Glissez pour tourner (Mobile) / Flèches (PC)</div>
+        </section>
+
+        <section id="minesweeper-view" class="view hidden">
+            <div class="score-board glass">Mines: <span id="mines-left">10</span></div>
+            <div id="minesweeper-grid"></div>
+            <button id="reset-minesweeper" class="btn glass">Rejouer</button>
+        </section>
+
+        <section id="chess-view" class="view hidden">
+            <div class="board-container glass">
+                <div id="chess-board" class="board"></div>
+            </div>
+            <p class="hint">Mode Libre : Glissez-déposez les pièces</p>
+        </section>
+
+        <section id="checkers-view" class="view hidden">
+            <div class="board-container glass">
+                <div id="checkers-board" class="board"></div>
+            </div>
+            <p class="hint">Mode Libre : Glissez-déposez les pions</p>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/snake.js"></script>
+    <script src="js/minesweeper.js"></script>
+    <script src="js/board-games.js"></script>
+</body>
+</html>
