@@ -3,63 +3,44 @@ const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('snake-score');
 const highScoreEl = document.getElementById('snake-highscore');
 
-// Responsive Canvas
-let gridSize = 20;
-let tileCount = 20;
+let gridSize = 20; let tileCount = 20;
 canvas.width = 400; canvas.height = 400;
 if (window.innerWidth < 450) { canvas.width = 300; canvas.height = 300; gridSize = 15; }
 
-let snake = [];
-let apple = {};
-let particles = []; // Système de particules Wow Effect
-let dx = 0; let dy = -1;
-let score = 0;
+let snake = []; let apple = {}; let particles = [];
+let dx = 0; let dy = -1; let score = 0;
 let highScore = localStorage.getItem('snake-highscore') || 0;
 highScoreEl.innerText = highScore;
-let gameLoop;
-let isPlaying = false;
+let gameLoop; let isPlaying = false;
 
 function initSnake() {
-    snake = [{ x: 10, y: 10 }];
-    score = 0; scoreEl.innerText = score;
-    dx = 0; dy = -1;
-    particles = []; // Reset particules
+    snake = [{ x: 10, y: 10 }, { x: 10, y: 11 }, { x: 10, y: 12 }]; // Vrai serpent long
+    score = 0; scoreEl.innerText = score; dx = 0; dy = -1; particles = [];
     placeApple();
     if(gameLoop) clearInterval(gameLoop);
     gameLoop = setInterval(update, 100);
     isPlaying = true;
 }
 
-function placeApple() {
-    apple = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
-}
+function placeApple() { apple = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) }; }
 
 function update() {
-    const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+    // Traverse l'écran (Wow Effect - Infini)
+    let newX = (snake[0].x + dx + tileCount) % tileCount;
+    let newY = (snake[0].y + dy + tileCount) % tileCount;
+    const head = { x: newX, y: newY };
     
-    // Wall collision
-    if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) return gameOver();
-    // Self collision
-    for (let s of snake) if (head.x === s.x && head.y === s.y) return gameOver();
-
+    // Collision avec lui-même
+    for (let i = 1; i < snake.length; i++) {
+        if (head.x === snake[i].x && head.y === snake[i].y) return gameOver();
+    }
     snake.unshift(head);
 
-    // Eat Apple
     if (head.x === apple.x && head.y === apple.y) {
-        if(navigator.vibrate) navigator.vibrate([20, 30, 20]); // Ripple haptic
-        score += 10;
-        scoreEl.innerText = score;
-        
-        // Explosion de particules
-        for(let i = 0; i < 15; i++) {
-            particles.push({
-                x: apple.x * gridSize + gridSize/2, 
-                y: apple.y * gridSize + gridSize/2, 
-                vx: (Math.random() - 0.5) * 8, 
-                vy: (Math.random() - 0.5) * 8, 
-                life: 1,
-                color: '#ff4757'
-            });
+        if(navigator.vibrate) navigator.vibrate([20, 30, 20]);
+        score += 10; scoreEl.innerText = score;
+        for(let i = 0; i < 10; i++) {
+            particles.push({ x: apple.x*gridSize+gridSize/2, y: apple.y*gridSize+gridSize/2, vx: (Math.random()-0.5)*8, vy: (Math.random()-0.5)*8, life: 1, color: '#f1c40f' });
         }
         placeApple();
     } else {
@@ -69,56 +50,48 @@ function update() {
 }
 
 function draw() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Souris 🐁
+    ctx.font = (gridSize * 0.9) + "px Arial";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText('🐁', apple.x * gridSize + gridSize/2, apple.y * gridSize + gridSize/2);
 
-    // Apple (Neon effect)
-    ctx.shadowBlur = 15; ctx.shadowColor = "#ff4757"; ctx.fillStyle = '#ff4757';
-    ctx.fillRect(apple.x * gridSize, apple.y * gridSize, gridSize - 2, gridSize - 2);
-
-    // Snake
-    ctx.shadowBlur = 10; ctx.shadowColor = "#00f2fe"; ctx.fillStyle = '#00f2fe';
+    // Vrai serpent vert (organique)
+    ctx.shadowBlur = 10; ctx.shadowColor = "#2ecc71";
     snake.forEach((s, i) => {
-        if(i === 0) ctx.fillStyle = '#4facfe'; // Head lighter
-        else ctx.fillStyle = '#00f2fe';
-        ctx.fillRect(s.x * gridSize, s.y * gridSize, gridSize - 2, gridSize - 2);
+        ctx.fillStyle = i === 0 ? '#1abc9c' : '#2ecc71'; 
+        ctx.beginPath();
+        ctx.arc(s.x * gridSize + gridSize/2, s.y * gridSize + gridSize/2, gridSize/2.2, 0, Math.PI * 2);
+        ctx.fill();
+        // Yeux sur la tête
+        if(i === 0) {
+            ctx.fillStyle = "black";
+            ctx.beginPath(); ctx.arc(s.x * gridSize + gridSize/3, s.y * gridSize + gridSize/3, 2, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(s.x * gridSize + gridSize/1.5, s.y * gridSize + gridSize/3, 2, 0, Math.PI * 2); ctx.fill();
+        }
     });
     ctx.shadowBlur = 0;
 
-    // Dessiner les particules
     particles.forEach((p, index) => {
-        p.x += p.vx; 
-        p.y += p.vy; 
-        p.life -= 0.05; // Fade out
-        ctx.fillStyle = `rgba(255, 71, 87, ${p.life})`;
-        ctx.shadowBlur = 5; ctx.shadowColor = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-        ctx.fill();
+        p.x += p.vx; p.y += p.vy; p.life -= 0.05;
+        ctx.fillStyle = `rgba(241, 196, 15, ${p.life})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
         if(p.life <= 0) particles.splice(index, 1);
     });
-    ctx.shadowBlur = 0;
 }
 
 function gameOver() {
     clearInterval(gameLoop);
-    if(navigator.vibrate) navigator.vibrate(200); // Crash haptic
-    
-    // Wow Effect: Secousse (Shake) de l'écran lors du crash
+    if(navigator.vibrate) navigator.vibrate(200);
     canvas.style.transform = "translate(10px, 10px)";
     setTimeout(() => canvas.style.transform = "translate(-10px, -10px)", 50);
     setTimeout(() => canvas.style.transform = "translate(10px, -10px)", 100);
     setTimeout(() => canvas.style.transform = "translate(0, 0)", 150);
-
-    if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('snake-highscore', highScore);
-        highScoreEl.innerText = highScore;
-    }
-    setTimeout(initSnake, 1500); // Restart auto
+    if (score > highScore) { highScore = score; localStorage.setItem('snake-highscore', highScore); highScoreEl.innerText = highScore; }
+    setTimeout(initSnake, 1500);
 }
 
-// Controls (Keyboard)
 document.addEventListener('keydown', e => {
     if(!isPlaying) return;
     if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
@@ -127,22 +100,17 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
 });
 
-// Controls (Swipe / Touch)
 let touchStartX = 0; let touchStartY = 0;
 canvas.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
 canvas.addEventListener('touchend', e => {
     if(!isPlaying) return;
-    let touchEndX = e.changedTouches[0].screenX; let touchEndY = e.changedTouches[0].screenY;
-    let deltaX = touchEndX - touchStartX; let deltaY = touchEndY - touchStartY;
-    if (Math.abs(deltaX) > Math.abs(deltaY)) { // Horizontal swipe
-        if (deltaX > 30 && dx === 0) { dx = 1; dy = 0; }
-        else if (deltaX < -30 && dx === 0) { dx = -1; dy = 0; }
-    } else { // Vertical swipe
-        if (deltaY > 30 && dy === 0) { dx = 0; dy = 1; }
-        else if (deltaY < -30 && dy === 0) { dx = 0; dy = -1; }
+    let deltaX = e.changedTouches[0].screenX - touchStartX; let deltaY = e.changedTouches[0].screenY - touchStartY;
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX > 30 && dx === 0) { dx = 1; dy = 0; } else if (deltaX < -30 && dx === 0) { dx = -1; dy = 0; }
+    } else {
+        if (deltaY > 30 && dy === 0) { dx = 0; dy = 1; } else if (deltaY < -30 && dy === 0) { dx = 0; dy = -1; }
     }
 }, {passive: true});
 
-// Listeners for view changes
-document.addEventListener('start-snake', () => { initSnake(); });
+document.addEventListener('start-snake', initSnake);
 document.addEventListener('stop-snake', () => { clearInterval(gameLoop); isPlaying = false; });
