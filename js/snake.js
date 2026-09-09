@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById('snake-canvas');
 const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('snake-score');
@@ -12,6 +11,7 @@ if (window.innerWidth < 450) { canvas.width = 300; canvas.height = 300; gridSize
 
 let snake = [];
 let apple = {};
+let particles = []; // Système de particules Wow Effect
 let dx = 0; let dy = -1;
 let score = 0;
 let highScore = localStorage.getItem('snake-highscore') || 0;
@@ -23,6 +23,7 @@ function initSnake() {
     snake = [{ x: 10, y: 10 }];
     score = 0; scoreEl.innerText = score;
     dx = 0; dy = -1;
+    particles = []; // Reset particules
     placeApple();
     if(gameLoop) clearInterval(gameLoop);
     gameLoop = setInterval(update, 100);
@@ -48,6 +49,18 @@ function update() {
         if(navigator.vibrate) navigator.vibrate([20, 30, 20]); // Ripple haptic
         score += 10;
         scoreEl.innerText = score;
+        
+        // Explosion de particules
+        for(let i = 0; i < 15; i++) {
+            particles.push({
+                x: apple.x * gridSize + gridSize/2, 
+                y: apple.y * gridSize + gridSize/2, 
+                vx: (Math.random() - 0.5) * 8, 
+                vy: (Math.random() - 0.5) * 8, 
+                life: 1,
+                color: '#ff4757'
+            });
+        }
         placeApple();
     } else {
         snake.pop();
@@ -71,11 +84,32 @@ function draw() {
         ctx.fillRect(s.x * gridSize, s.y * gridSize, gridSize - 2, gridSize - 2);
     });
     ctx.shadowBlur = 0;
+
+    // Dessiner les particules
+    particles.forEach((p, index) => {
+        p.x += p.vx; 
+        p.y += p.vy; 
+        p.life -= 0.05; // Fade out
+        ctx.fillStyle = `rgba(255, 71, 87, ${p.life})`;
+        ctx.shadowBlur = 5; ctx.shadowColor = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        if(p.life <= 0) particles.splice(index, 1);
+    });
+    ctx.shadowBlur = 0;
 }
 
 function gameOver() {
     clearInterval(gameLoop);
     if(navigator.vibrate) navigator.vibrate(200); // Crash haptic
+    
+    // Wow Effect: Secousse (Shake) de l'écran lors du crash
+    canvas.style.transform = "translate(10px, 10px)";
+    setTimeout(() => canvas.style.transform = "translate(-10px, -10px)", 50);
+    setTimeout(() => canvas.style.transform = "translate(10px, -10px)", 100);
+    setTimeout(() => canvas.style.transform = "translate(0, 0)", 150);
+
     if (score > highScore) {
         highScore = score;
         localStorage.setItem('snake-highscore', highScore);
