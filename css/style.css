@@ -25,33 +25,9 @@ body {
 }
 
 .app-container { display: flex; flex-direction: column; height: 100vh; }
-
-.glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.glass-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 20px;
-    background: rgba(15, 12, 41, 0.8);
-    backdrop-filter: blur(10px);
-    z-index: 100;
-}
-
-.glass-header h1 { 
-    font-size: 1.5rem; 
-    font-weight: 700; 
-    background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); 
-    -webkit-background-clip: text; 
-    -webkit-text-fill-color: transparent; 
-}
-
+.glass { background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+.glass-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(15, 12, 41, 0.8); backdrop-filter: blur(10px); z-index: 100; }
+.glass-header h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 button { background: none; border: none; color: white; font-weight: bold; cursor: pointer; padding: 10px; border-radius: 8px; transition: 0.2s; }
 button:active { transform: scale(0.95); background: var(--glass-bg); }
 .btn { border: 1px solid var(--glass-border); padding: 10px 20px; margin-top: 15px; }
@@ -59,68 +35,54 @@ button:active { transform: scale(0.95); background: var(--glass-bg); }
 .view { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
 .hidden { display: none !important; }
 .active { display: flex; animation: fadeIn 0.4s ease-out; }
-
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 600px; }
 .game-card { padding: 25px 15px; text-align: center; cursor: pointer; }
 .game-card:active { transform: scale(0.95); }
-.game-card.glass:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 8px 30px rgba(0, 242, 254, 0.4);
-    border-color: var(--neon-accent);
-}
+.game-card.glass:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 30px rgba(0, 242, 254, 0.4); border-color: var(--neon-accent); }
 .card-icon { font-size: 3rem; margin-bottom: 10px; }
 .game-card h2 { font-size: 1.2rem; margin-bottom: 5px; }
 .game-card p { font-size: 0.8rem; opacity: 0.7; }
 
 /* Snake & Minesweeper */
-canvas { background: rgba(0,0,0,0.4); border-radius: 10px; box-shadow: 0 0 20px rgba(0, 242, 254, 0.2); max-width: 100%; transition: transform 0.1s; }
+canvas { background: rgba(0,0,0,0.5); border-radius: 15px; box-shadow: 0 0 20px rgba(46, 204, 113, 0.2); max-width: 100%; transition: transform 0.1s; }
 .score-board { padding: 10px 20px; margin-bottom: 20px; font-weight: bold; }
 .controls-hint { margin-top: 15px; opacity: 0.6; font-size: 0.9rem; }
 #minesweeper-grid { display: grid; background: #222; gap: 2px; padding: 2px; border-radius: 8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
 .ms-cell { width: 35px; height: 35px; background: #444; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; cursor: pointer; border-radius: 4px; }
-.ms-cell:active { background: #555; }
 .ms-cell.revealed { background: #2a2a2a; box-shadow: inset 0 0 5px rgba(0,0,0,0.8); }
-.ms-cell.mine { background: #ff4757; }
 
-/* --- BOARD GAMES FIXES (Chess / Checkers) --- */
+/* --- BOARD GAMES FIXES (Taille Dynamique Maximisée) --- */
 .board-container { 
     padding: 10px; 
     background: #8b5a2b; 
     border-radius: 8px; 
     box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5); 
     width: 100%; 
-    max-width: 450px; /* Plus grand */
+    max-width: 650px; 
+    aspect-ratio: 1; 
 }
-
 .board { 
     display: grid; 
     grid-template-columns: repeat(8, 1fr); 
-    grid-template-rows: repeat(8, 1fr); /* CORRECTION : Empêche l'écrasement des cases vides */
+    grid-template-rows: repeat(8, 1fr); 
     width: 100%; 
-    aspect-ratio: 1; /* CORRECTION : Force un carré parfait dynamique */
+    height: 100%;
     border: 3px solid #3e2723; 
 }
 
-.square { display: flex; justify-content: center; align-items: center; font-size: 2.2rem; cursor: grab; position: relative; transition: box-shadow 0.2s; }
+.square { display: flex; justify-content: center; align-items: center; font-size: clamp(1.5rem, 6vw, 3.5rem); cursor: grab; position: relative; }
 .square.light { background: #f0d9b5; }
 .square.dark { background: #b58863; color: #fff;}
+.square.highlight { background: rgba(46, 204, 113, 0.5) !important; }
 
 .piece { cursor: grab; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); transition: transform 0.1s; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
 .piece:active { cursor: grabbing; transform: scale(1.1); }
-
-.checker { width: 80%; height: 80%; border-radius: 50%; box-shadow: inset -3px -3px 5px rgba(0,0,0,0.4), 2px 2px 5px rgba(0,0,0,0.5); transition: transform 0.1s; }
+.checker { width: 85%; height: 85%; border-radius: 50%; box-shadow: inset -3px -3px 5px rgba(0,0,0,0.4), 2px 2px 5px rgba(0,0,0,0.5); }
 .checker.red { background: #c62828; }
 .checker.black { background: #212121; }
+.checker.king { border: 3px solid gold; background-image: radial-gradient(circle, transparent 20%, #ffdf00 20%, #ffdf00 80%, transparent 80%); }
 
-.hint { margin-top: 15px; opacity: 0.7; font-weight: bold; color: var(--neon-accent); }
-
-/* Animation IA Wow Effect */
-.ai-moving {
-    z-index: 1000 !important;
-    pointer-events: none;
-    box-shadow: 0 0 20px #ff4757 !important;
-    border-radius: 50%;
-    background: rgba(255, 71, 87, 0.2);
-}
+.hint { margin-top: 15px; opacity: 0.9; font-weight: bold; color: var(--neon-accent); text-align: center; }
+.ai-moving { z-index: 1000 !important; pointer-events: none; box-shadow: 0 0 20px #ff4757 !important; border-radius: 50%; }
