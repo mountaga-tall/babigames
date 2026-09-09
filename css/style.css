@@ -10,10 +10,19 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, var(--bg-color), #302b63, #24243e);
+    /* Effet Wow : Dégradé animé fluide */
+    background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #0f0c29);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     color: var(--text-main);
     min-height: 100vh;
     overflow: hidden; /* Empêche le scroll sur PWA */
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .app-container { display: flex; flex-direction: column; height: 100vh; }
@@ -26,6 +35,7 @@ body {
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transition douce */
 }
 
 .glass-header {
@@ -36,7 +46,13 @@ body {
     z-index: 100;
 }
 
-.glass-header h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.glass-header h1 { 
+    font-size: 1.5rem; 
+    font-weight: 700; 
+    background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+}
 
 button { background: none; border: none; color: white; font-weight: bold; cursor: pointer; padding: 10px; border-radius: 8px; transition: 0.2s; }
 button:active { transform: scale(0.95); background: var(--glass-bg); }
@@ -51,14 +67,22 @@ button:active { transform: scale(0.95); background: var(--glass-bg); }
 
 /* Menu */
 .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 600px; }
-.game-card { padding: 25px 15px; text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.game-card { padding: 25px 15px; text-align: center; cursor: pointer; }
 .game-card:active { transform: scale(0.95); }
+
+/* Effet Néon au survol des cartes */
+.game-card.glass:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(0, 242, 254, 0.4);
+    border-color: var(--neon-accent);
+}
+
 .card-icon { font-size: 3rem; margin-bottom: 10px; }
 .game-card h2 { font-size: 1.2rem; margin-bottom: 5px; }
 .game-card p { font-size: 0.8rem; opacity: 0.7; }
 
 /* Snake */
-canvas { background: rgba(0,0,0,0.4); border-radius: 10px; box-shadow: 0 0 20px rgba(0, 242, 254, 0.2); max-width: 100%; }
+canvas { background: rgba(0,0,0,0.4); border-radius: 10px; box-shadow: 0 0 20px rgba(0, 242, 254, 0.2); max-width: 100%; transition: transform 0.1s; }
 .score-board { padding: 10px 20px; margin-bottom: 20px; font-weight: bold; }
 .controls-hint { margin-top: 15px; opacity: 0.6; font-size: 0.9rem; }
 
@@ -72,12 +96,12 @@ canvas { background: rgba(0,0,0,0.4); border-radius: 10px; box-shadow: 0 0 20px 
 /* Board Games (Chess / Checkers) */
 .board-container { padding: 10px; background: #8b5a2b; border-radius: 8px; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
 .board { display: grid; grid-template-columns: repeat(8, 1fr); width: 320px; height: 320px; border: 2px solid #3e2723; }
-.square { display: flex; justify-content: center; align-items: center; font-size: 2rem; cursor: grab; }
+.square { display: flex; justify-content: center; align-items: center; font-size: 2rem; cursor: grab; position: relative; transition: box-shadow 0.2s; }
 .square.light { background: #f0d9b5; }
 .square.dark { background: #b58863; color: #fff;}
-.piece { cursor: grab; text-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
+.piece { cursor: grab; text-shadow: 2px 2px 4px rgba(0,0,0,0.4); transition: transform 0.1s; }
 .piece:active { cursor: grabbing; transform: scale(1.1); }
-.checker { width: 80%; height: 80%; border-radius: 50%; box-shadow: inset -3px -3px 5px rgba(0,0,0,0.4), 2px 2px 5px rgba(0,0,0,0.5); }
+.checker { width: 80%; height: 80%; border-radius: 50%; box-shadow: inset -3px -3px 5px rgba(0,0,0,0.4), 2px 2px 5px rgba(0,0,0,0.5); transition: transform 0.1s; }
 .checker.red { background: #c62828; }
 .checker.black { background: #212121; }
 .hint { margin-top: 15px; opacity: 0.7; }
