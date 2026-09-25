@@ -1,125 +1,17 @@
-
-const gridEl = document.getElementById('minesweeper-grid');
-const minesLeftEl = document.getElementById('mines-left');
-const rows = 10; const cols = 10; const totalMines = 15;
-let board = []; let minesLeft = totalMines; let isGameOver = false;
-
-function initMinesweeper() {
-    board = [];
-    isGameOver = false;
-    minesLeft = totalMines;
-    minesLeftEl.innerText = minesLeft;
-    gridEl.style.gridTemplateColumns = `repeat(${cols}, 35px)`;
-    gridEl.innerHTML = '';
-    
-    // Create Board Data
-    for(let r=0; r<rows; r++){
-        let row = [];
-        for(let c=0; c<cols; c++) row.push({ mine: false, revealed: false, flagged: false, count: 0 });
-        board.push(row);
-    }
-
-    // Place Mines
-    let placed = 0;
-    while(placed < totalMines){
-        let r = Math.floor(Math.random() * rows);
-        let c = Math.floor(Math.random() * cols);
-        if(!board[r][c].mine){
-            board[r][c].mine = true;
-            placed++;
-        }
-    }
-
-    // Calculate Numbers
-    for(let r=0; r<rows; r++){
-        for(let c=0; c<cols; c++){
-            if(!board[r][c].mine){
-                let count = 0;
-                for(let i=-1; i<=1; i++)
-                    for(let j=-1; j<=1; j++)
-                        if(r+i>=0 && r+i<rows && c+j>=0 && c+j<cols && board[r+i][c+j].mine) count++;
-                board[r][c].count = count;
-            }
-        }
-    }
-
-    renderMinesweeper();
-}
-
-function renderMinesweeper() {
-    gridEl.innerHTML = '';
-    for(let r=0; r<rows; r++){
-        for(let c=0; c<cols; c++){
-            const cell = document.createElement('div');
-            cell.classList.add('ms-cell');
-            cell.dataset.r = r; cell.dataset.c = c;
-            
-            // Left click (Reveal)
-            cell.addEventListener('click', () => reveal(r, c));
-            // Right click / Long press (Flag)
-            cell.addEventListener('contextmenu', (e) => { e.preventDefault(); flag(r, c); });
-            
-            gridEl.appendChild(cell);
-        }
-    }
-}
-
-function updateCellDOM(r, c) {
-    const idx = r * cols + c;
-    const cellEl = gridEl.children[idx];
-    const cellData = board[r][c];
-
-    if(cellData.revealed) {
-        cellEl.classList.add('revealed');
-        if(cellData.mine) {
-            cellEl.innerHTML = '💣';
-            cellEl.classList.add('mine');
-        } else if(cellData.count > 0) {
-            cellEl.innerHTML = cellData.count;
-            const colors = ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6', '#f1c40f', '#1abc9c', '#34495e', '#7f8c8d'];
-            cellEl.style.color = colors[cellData.count-1];
-        }
-    } else if(cellData.flagged) {
-        cellEl.innerHTML = '🚩';
-    } else {
-        cellEl.innerHTML = '';
-    }
-}
-
-function reveal(r, c) {
-    if(isGameOver || board[r][c].revealed || board[r][c].flagged) return;
-    if(navigator.vibrate) navigator.vibrate(15);
-    
-    board[r][c].revealed = true;
-    updateCellDOM(r, c);
-
-    if(board[r][c].mine) {
-        isGameOver = true;
-        if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // Explosion
-        // Reveal all mines
-        for(let i=0; i<rows; i++) for(let j=0; j<cols; j++) 
-            if(board[i][j].mine) { board[i][j].revealed = true; updateCellDOM(i, j); }
-        return;
-    }
-
-    if(board[r][c].count === 0) {
-        for(let i=-1; i<=1; i++){
-            for(let j=-1; j<=1; j++){
-                if(r+i>=0 && r+i<rows && c+j>=0 && c+j<cols) reveal(r+i, c+j);
-            }
-        }
-    }
-}
-
-function flag(r, c) {
-    if(isGameOver || board[r][c].revealed) return;
-    if(navigator.vibrate) navigator.vibrate(30);
-    
-    board[r][c].flagged = !board[r][c].flagged;
-    minesLeft += board[r][c].flagged ? -1 : 1;
-    minesLeftEl.innerText = minesLeft;
-    updateCellDOM(r, c);
-}
-
-document.getElementById('reset-minesweeper').addEventListener('click', initMinesweeper);
-document.addEventListener('start-minesweeper', initMinesweeper);
+(() => {
+  const rows=10,cols=10,totalMines=15,grid=document.getElementById('minesweeper-grid'),leftEl=document.getElementById('mines-left'),scoreEl=document.getElementById('mines-score'),bestEl=document.getElementById('mines-highscore'),statusEl=document.getElementById('mines-status');
+  let board=[],flags=0,gameOver=false,started=false,score=0,best=Babi.getBest('minesweeper'),timer=0,startTime=0,pressTimer=null;
+  bestEl.textContent=best;
+  const inside=(r,c)=>r>=0&&r<rows&&c>=0&&c<cols;
+  function neighbors(r,c){const a=[];for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++)if(dr||dc)if(inside(r+dr,c+dc))a.push([r+dr,c+dc]);return a}
+  function build(safeR=0,safeC=0){board=Array.from({length:rows},()=>Array.from({length:cols},()=>({mine:false,revealed:false,flagged:false,n:0})));const forbidden=new Set([[safeR,safeC],...neighbors(safeR,safeC)].map(([r,c])=>r*cols+c));let placed=0;while(placed<totalMines){const r=Math.floor(Math.random()*rows),c=Math.floor(Math.random()*cols),id=r*cols+c;if(forbidden.has(id)||board[r][c].mine)continue;board[r][c].mine=true;placed++}for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(!board[r][c].mine)board[r][c].n=neighbors(r,c).filter(([rr,cc])=>board[rr][cc].mine).length}
+  function init(){clearTimeout(pressTimer);flags=0;gameOver=false;started=false;score=0;timer=0;scoreEl.textContent='0';leftEl.textContent=totalMines;statusEl.textContent='Touchez une case • appui long / clic droit = drapeau';grid.style.gridTemplateColumns=`repeat(${cols},1fr)`;build(4,4);render()}
+  function render(){grid.innerHTML='';for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const cell=document.createElement('button');cell.className='ms-cell';cell.dataset.r=r;cell.dataset.c=c;bindCell(cell,r,c);grid.appendChild(cell);update(r,c)}}
+  function bindCell(el,r,c){el.addEventListener('click',e=>{if(el.dataset.long==='1'){el.dataset.long='0';return}reveal(r,c)});el.addEventListener('contextmenu',e=>{e.preventDefault();flag(r,c)});el.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){el.dataset.long='0';pressTimer=setTimeout(()=>{el.dataset.long='1';flag(r,c)},420)}});['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,()=>clearTimeout(pressTimer)))}
+  function update(r,c){const el=grid.children[r*cols+c],d=board[r][c];el.classList.toggle('revealed',d.revealed);el.classList.toggle('flagged',d.flagged);if(d.revealed){el.innerHTML=d.mine?'💣':(d.n?String(d.n):'');el.classList.toggle('mine',d.mine)}else el.innerHTML=d.flagged?'🚩':''}
+  function reveal(r,c){if(gameOver||board[r][c].revealed||board[r][c].flagged)return;if(!started){started=true;startTime=performance.now();build(r,c);render();reveal(r,c);return}const q=[[r,c]],seen=new Set();while(q.length){const [rr,cc]=q.shift(),id=rr*cols+cc;if(seen.has(id)||!inside(rr,cc))continue;seen.add(id);const d=board[rr][cc];if(d.revealed||d.flagged)continue;d.revealed=true;score+=d.n?5:8;update(rr,cc);if(d.mine){explode();return}if(d.n===0)neighbors(rr,cc).forEach(x=>q.push(x))}scoreEl.textContent=score;checkWin();Babi.vibrate(10)}
+  function flag(r,c){if(gameOver||board[r][c].revealed)return;if(!board[r][c].flagged&&flags>=totalMines)return;board[r][c].flagged=!board[r][c].flagged;flags+=board[r][c].flagged?1:-1;leftEl.textContent=totalMines-flags;update(r,c);Babi.vibrate(25)}
+  function explode(){gameOver=true;board.flat().forEach(d=>{if(d.mine)d.revealed=true});for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)update(r,c);Babi.vibrate([100,50,100]);statusEl.textContent='💥 Mine déclenchée. Rejouez !';Babi.win('minesweeper','BOOM !',`Score ${score} • Meilleur ${best}`,'💣')}
+  function checkWin(){const safe=rows*cols-totalMines,revealed=board.flat().filter(d=>d.revealed&&!d.mine).length;if(revealed!==safe)return;gameOver=true;const elapsed=Math.max(1,(performance.now()-startTime)/1000),bonus=Math.max(0,Math.round(500-elapsed*8));score+=bonus;scoreEl.textContent=score;best=Babi.setBest('minesweeper',score);bestEl.textContent=best;statusEl.textContent=`🎉 Victoire en ${elapsed.toFixed(1)} s`;Babi.win('minesweeper','Grille nettoyée !',`Score ${score} • Bonus vitesse ${bonus}`,'🏆')}
+  document.addEventListener('start-minesweeper',init);document.getElementById('reset-minesweeper').addEventListener('click',init);
+})();

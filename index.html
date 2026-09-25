@@ -1,82 +1,117 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BabiGames</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1a1a2e">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090b16">
+  <meta name="description" content="BabiGames — 8 jeux web rapides, hors-ligne et optimisés mobile.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>BabiGames — 8 jeux</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- App Container -->
-    <div id="app" class="app-container">
-        <!-- Header -->
-        <header class="glass-header">
-            <button id="back-btn" class="hidden">◁ Retour</button>
-            <h1>BabiGames</h1>
-            <button id="install-btn" class="hidden">Installer</button>
-        </header>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+  <div class="scanlines"></div>
 
-        <!-- Main Menu -->
-        <main id="menu" class="view active">
-            <div class="menu-grid">
-                <div class="game-card glass" data-game="snake">
-                    <div class="card-icon">🐍</div>
-                    <h2>Snake</h2>
-                    <p>Le classique cyber-néon</p>
-                </div>
-                <div class="game-card glass" data-game="minesweeper">
-                    <div class="card-icon">💣</div>
-                    <h2>Démineur</h2>
-                    <p>Logique et adrénaline</p>
-                </div>
-                <div class="game-card glass" data-game="chess">
-                    <div class="card-icon">♟️</div>
-                    <h2>Échecs</h2>
-                    <p>Stratégie royale</p>
-                </div>
-                <div class="game-card glass" data-game="checkers">
-                    <div class="card-icon">🔴</div>
-                    <h2>Dames</h2>
-                    <p>Anticipation pure</p>
-                </div>
-            </div>
-        </main>
+  <div id="app" class="app-shell">
+    <header class="glass-header">
+      <button id="back-btn" class="icon-btn hidden" aria-label="Retour au menu">←</button>
+      <button id="home-btn" class="brand" aria-label="BabiGames"><span>Babi</span>Games</button>
+      <button id="install-btn" class="small-btn hidden">Installer</button>
+    </header>
 
-        <!-- Game Views -->
-        <section id="snake-view" class="view hidden">
-            <div class="score-board glass">Score: <span id="snake-score">0</span> | Max: <span id="snake-highscore">0</span></div>
-            <canvas id="snake-canvas"></canvas>
-            <div class="controls-hint">Glissez pour tourner (Mobile) / Flèches (PC)</div>
-        </section>
+    <main id="menu" class="view active">
+      <section class="hero glass">
+        <div class="eyebrow">BABI • ARCADE • 8 JEUX</div>
+        <h1>Joue. Score. <span>Recommence.</span></h1>
+        <p>Une arcade mobile-first avec sauvegarde des meilleurs scores, effets néon et mode hors-ligne.</p>
+        <div class="hero-stats">
+          <div><strong>8</strong><small>jeux</small></div>
+          <div><strong>3</strong><small>niveaux</small></div>
+          <div><strong>∞</strong><small>rejouabilité</small></div>
+        </div>
+      </section>
 
-        <section id="minesweeper-view" class="view hidden">
-            <div class="score-board glass">Mines: <span id="mines-left">10</span></div>
-            <div id="minesweeper-grid"></div>
-            <button id="reset-minesweeper" class="btn glass">Rejouer</button>
-        </section>
+      <section class="menu-grid" aria-label="Liste des jeux">
+        <button class="game-card glass" data-game="snake"><span class="card-icon">🐍</span><span class="card-title">Snake</span><span class="card-desc">Arcade & réflexes</span></button>
+        <button class="game-card glass" data-game="minesweeper"><span class="card-icon">💣</span><span class="card-title">Démineur</span><span class="card-desc">Logique & tension</span></button>
+        <button class="game-card glass" data-game="chess"><span class="card-icon">♟️</span><span class="card-title">Échecs</span><span class="card-desc">3 niveaux • chrono</span></button>
+        <button class="game-card glass" data-game="checkers"><span class="card-icon">🔴</span><span class="card-title">Dames</span><span class="card-desc">3 niveaux • rafles</span></button>
+        <button class="game-card glass" data-game="connect4"><span class="card-icon">🟡</span><span class="card-title">Puissance 4</span><span class="card-desc">Duel instantané</span></button>
+        <button class="game-card glass" data-game="2048"><span class="card-icon">🔢</span><span class="card-title">2048</span><span class="card-desc">Combo & stratégie</span></button>
+        <button class="game-card glass" data-game="memory"><span class="card-icon">🧠</span><span class="card-title">Memory</span><span class="card-desc">Mémoire & vitesse</span></button>
+        <button class="game-card glass" data-game="tetris"><span class="card-icon">🧱</span><span class="card-title">Tetris</span><span class="card-desc">Chute & combos</span></button>
+      </section>
+    </main>
 
-        <section id="chess-view" class="view hidden">
-            <div class="board-container glass">
-                <div id="chess-board" class="board"></div>
-            </div>
-            <p class="hint">Mode Libre : Glissez-déposez les pièces</p>
-        </section>
+    <section id="snake-view" class="view hidden">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="snake-score">0</strong></div><div><small>MEILLEUR</small><strong id="snake-highscore">0</strong></div><button id="snake-reset" class="small-btn">Rejouer</button></div>
+      <canvas id="snake-canvas" aria-label="Jeu Snake"></canvas>
+      <div class="game-hint">Swipe ou flèches • traverse les bords • mange le 🐁</div>
+    </section>
 
-        <section id="checkers-view" class="view hidden">
-            <div class="board-container glass">
-                <div id="checkers-board" class="board"></div>
-            </div>
-            <p class="hint">Mode Libre : Glissez-déposez les pions</p>
-        </section>
-    </div>
+    <section id="minesweeper-view" class="view hidden">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="mines-score">0</strong></div><div><small>MEILLEUR</small><strong id="mines-highscore">0</strong></div><div><small>MINES</small><strong id="mines-left">15</strong></div><button id="reset-minesweeper" class="small-btn">Rejouer</button></div>
+      <div id="minesweeper-grid" class="mine-grid" aria-label="Grille du démineur"></div>
+      <div id="mines-status" class="game-hint">Touchez une case • appui long / clic droit = drapeau</div>
+    </section>
 
-    <!-- Scripts -->
-    <script src="js/main.js"></script>
-    <script src="js/snake.js"></script>
-    <script src="js/minesweeper.js"></script>
-    <script src="js/board-games.js"></script>
+    <section id="chess-view" class="view hidden board-view">
+      <div class="game-head glass">
+        <div><small>ÉCHECS</small><strong id="chess-status">À votre tour</strong></div>
+        <div class="level-switch" data-game="chess"><button data-level="easy">Facile</button><button data-level="medium" class="selected">Moyen</button><button data-level="hard">Expert</button></div>
+      </div>
+      <div class="topbar glass"><div><small>SCORE</small><strong id="chess-score">0</strong></div><div><small>MEILLEUR</small><strong id="chess-highscore">0</strong></div><div><small>TOUR</small><strong id="chess-timer">15</strong></div><button id="chess-reset" class="small-btn">Nouvelle partie</button></div>
+      <div class="board-frame glass"><div id="chess-board" class="board board-8" role="grid" aria-label="Échiquier"></div></div>
+      <div id="chess-hint" class="game-hint">Sélectionnez une pièce blanche puis une case cible.</div>
+    </section>
+
+    <section id="checkers-view" class="view hidden board-view">
+      <div class="game-head glass">
+        <div><small>DAMES</small><strong id="checkers-status">À votre tour</strong></div>
+        <div class="level-switch" data-game="checkers"><button data-level="easy">Facile</button><button data-level="medium" class="selected">Moyen</button><button data-level="hard">Expert</button></div>
+      </div>
+      <div class="topbar glass"><div><small>SCORE</small><strong id="checkers-score">0</strong></div><div><small>MEILLEUR</small><strong id="checkers-highscore">0</strong></div><div><small>TOUR</small><strong id="checkers-timer">15</strong></div><button id="checkers-reset" class="small-btn">Nouvelle partie</button></div>
+      <div class="board-frame glass"><div id="checkers-board" class="board board-8" role="grid" aria-label="Damier"></div></div>
+      <div id="checkers-hint" class="game-hint">Une prise obligatoire est signalée en priorité. Les dames peuvent parcourir plusieurs cases.</div>
+    </section>
+
+    <section id="connect4-view" class="view hidden">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="connect4-score">0</strong></div><div><small>MEILLEUR</small><strong id="connect4-highscore">0</strong></div><div><small>ADVERSAIRE</small><strong id="connect4-status">IA</strong></div><button id="connect4-reset" class="small-btn">Rejouer</button></div>
+      <div id="connect4-board" class="connect4-board glass" aria-label="Puissance 4"></div>
+      <div class="game-hint">Alignez 4 jetons. Vous jouez 🔴.</div>
+    </section>
+
+    <section id="2048-view" class="view hidden">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="2048-score">0</strong></div><div><small>MEILLEUR</small><strong id="2048-highscore">0</strong></div><button id="2048-reset" class="small-btn">Rejouer</button></div>
+      <div id="game-2048" class="game-2048" tabindex="0" aria-label="Jeu 2048"></div>
+      <div class="game-hint">Flèches ou swipe • fusionnez les tuiles identiques.</div>
+    </section>
+
+    <section id="memory-view" class="view hidden">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="memory-score">0</strong></div><div><small>MEILLEUR</small><strong id="memory-highscore">0</strong></div><div><small>COUPS</small><strong id="memory-moves">0</strong></div><button id="memory-reset" class="small-btn">Rejouer</button></div>
+      <div id="memory-board" class="memory-board" aria-label="Memory"></div>
+      <div class="game-hint">Retournez deux cartes. Moins de coups = meilleur score.</div>
+    </section>
+
+    <section id="tetris-view" class="view hidden">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="tetris-score">0</strong></div><div><small>MEILLEUR</small><strong id="tetris-highscore">0</strong></div><div><small>NIVEAU</small><strong id="tetris-level">1</strong></div><button id="tetris-reset" class="small-btn">Rejouer</button></div>
+      <canvas id="tetris-canvas" aria-label="Tetris"></canvas>
+      <div class="game-hint">← → déplacer • ↑ tourner • ↓ accélérer • Espace = chute</div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="win-overlay" class="win-overlay hidden"><div class="win-card glass"><div id="win-emoji" class="win-emoji">🏆</div><h2 id="win-title">Victoire !</h2><p id="win-text">Excellent.</p><button id="win-replay" class="primary-btn">Rejouer</button><button id="win-menu" class="ghost-btn">Menu</button></div></div>
+
+  <script src="js/main.js"></script>
+  <script src="js/snake.js"></script>
+  <script src="js/minesweeper.js"></script>
+  <script src="js/board-games.js"></script>
+  <script src="js/arcade-games.js"></script>
 </body>
 </html>

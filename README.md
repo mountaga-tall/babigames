@@ -1,17 +1,37 @@
 # 🎮 BabiGames
 
-BabiGames est une PWA (Progressive Web App) "Effet Wow" regroupant 4 jeux classiques (Snake, Démineur, Échecs et Dames) dans une interface Glassmorphism moderne.
+BabiGames est une PWA Glassmorphism / Wow Effect comprenant 8 jeux : Snake, Démineur, Échecs, Dames, Puissance 4, 2048, Memory et Tetris.
 
-## ✨ Fonctionnalités
-- **100% Hors-ligne :** Jouable dans l'avion ou le métro grâce au Service Worker.
-- **Haptic Feedback :** Vibrations tactiles au toucher pour une expérience "App Native".
-- **Responsive & Mobile-First :** Conçu comme une app mobile (touches directionnelles + swipe).
-- **Mode Sandbox (Jeux de société) :** Échecs et Dames en mode libre (drag-and-drop des pièces) pour jouer avec un ami en direct sur le même écran.
+## Échecs & Dames
+- 3 niveaux : Facile, Moyen, Expert.
+- Score en temps réel + meilleur score sauvegardé en local.
+- Chronomètre par tour du joueur : lorsque le temps expire, le tour passe à l'IA.
+- Échecs : déplacements légaux, protection du roi, échec, échec et mat, pat, roque, prise en passant et promotion automatique.
+- Dames : prise obligatoire, rafles multiples, promotion et vraies dames à longue portée sur diagonales.
 
-## 🚀 Comment déployer sur GitHub Pages
-1. Décompressez ce dossier.
-2. Initialisez un repo Git : `git init`
-3. Poussez le code sur GitHub.
-4. Dans votre repo GitHub, allez dans **Settings > Pages**.
-5. Sous "Source", choisissez la branche **main** (ou master) et sauvegardez.
-6. Votre PWA BabiGames sera en ligne et installable sur smartphone en 2 minutes !
+## Arcade
+Chaque jeu dispose de son score en direct, de son meilleur score local et d'effets de fin de partie.
+
+## PWA / GitHub Pages
+Le projet est 100% statique : HTML, CSS et JavaScript sans dépendance externe. Le Service Worker est versionné en `babigames-v2` pour éviter de conserver l'ancienne version en cache.
+
+Structure :
+```text
+babigames-main/
+├── .gitignore
+├── index.html
+├── manifest.json
+├── sw.js
+├── README.md
+├── css/
+│   └── style.css
+├── js/
+│   ├── main.js
+│   ├── snake.js
+│   ├── minesweeper.js
+│   ├── board-games.js
+│   └── arcade-games.js
+└── icons/
+    ├── icon-192.png
+    └── icon-512.png
+```
