@@ -14,7 +14,15 @@
   function draw(){const w=canvas.clientWidth,h=canvas.clientHeight,p=cellPx(); ctx.clearRect(0,0,w,h); ctx.fillStyle='rgba(5,9,17,.72)';ctx.fillRect(0,0,w,h); ctx.strokeStyle='rgba(255,255,255,.035)';ctx.lineWidth=1; for(let i=1;i<size;i++){ctx.beginPath();ctx.moveTo(i*p,0);ctx.lineTo(i*p,h);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*p);ctx.lineTo(w,i*p);ctx.stroke()}
     ctx.font=`${p*.72}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🐁',apple.x*p+p/2,apple.y*p+p/2);
     snake.forEach((s,i)=>{ctx.fillStyle=i?'#39f3a3':'#35e8ff';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=i?8:16;ctx.beginPath();ctx.arc(s.x*p+p/2,s.y*p+p/2,p*.37,0,Math.PI*2);ctx.fill(); if(i===0){ctx.shadowBlur=0;ctx.fillStyle='#071018';const ex=s.x*p+p*(dir.x?0.63:.34),ey=s.y*p+p*(dir.y?0.63:.34);ctx.beginPath();ctx.arc(ex,ey,p*.055,0,Math.PI*2);ctx.fill()}});ctx.shadowBlur=0;
-    particles.forEach((q,i)=>{q.x+=q.vx;q.y+=q.vy;q.life-=.05;ctx.fillStyle=`rgba(255,212,90,${q.life})`;ctx.beginPath();ctx.arc(q.x,q.y,2.4,0,Math.PI*2);ctx.fill();if(q.life<=0)particles.splice(i,1)});
+    
+    // Correction du bug de scintillement des particules (itération inversée)
+    for(let i=particles.length-1; i>=0; i--){
+      const q = particles[i];
+      q.x += q.vx; q.y += q.vy; q.life -= .05;
+      ctx.fillStyle = `rgba(255,212,90,${Math.max(0, q.life)})`; // Sécurisation du canal alpha
+      ctx.beginPath(); ctx.arc(q.x, q.y, 2.4, 0, Math.PI * 2); ctx.fill();
+      if(q.life <= 0) particles.splice(i, 1);
+    }
   }
   function loop(now){if(!playing)return; const dt=Math.min(50,now-last);last=now;accumulator+=dt; while(accumulator>=speed){accumulator-=speed;step();if(!playing)return} draw();raf=requestAnimationFrame(loop)}
   function gameOver(){playing=false;cancelAnimationFrame(raf);best=Babi.setBest('snake',score);bestEl.textContent=best;canvas.animate([{transform:'translate(0)'},{transform:'translate(9px,-5px)'},{transform:'translate(-8px,5px)'},{transform:'translate(0)'}],{duration:240});Babi.vibrate(180);Babi.win('snake','Game Over',`Score ${score} • Meilleur ${best}`,'🐍')}
