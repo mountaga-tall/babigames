@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090b16">
+  <meta name="description" content="BabiGames — 8 jeux web rapides, hors-ligne et optimisés mobile.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="color-scheme" content="dark">
+  <title>BabiGames — 8 jeux</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="bg-orb orb-a" aria-hidden="true"></div>
+  <div class="bg-orb orb-b" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <div id="app" class="app-shell">
+    <header class="glass-header">
+      <button id="back-btn" class="icon-btn hidden" aria-label="Retour au menu" type="button">←</button>
+      <button id="home-btn" class="brand" aria-label="BabiGames — retour au menu" type="button"><span>Babi</span>Games</button>
+      <button id="install-btn" class="small-btn hidden" type="button">Installer</button>
+    </header>
+
+    <main id="menu" class="view active" aria-label="Accueil BabiGames">
+      <section class="hero glass" aria-labelledby="hero-title">
+        <div class="eyebrow">BABI • ARCADE • 8 JEUX</div>
+        <h1 id="hero-title">Joue. Score. <span>Recommence.</span></h1>
+        <p>Une arcade mobile-first avec sauvegarde des meilleurs scores, effets néon, commandes tactiles et mode hors-ligne.</p>
+        <div class="hero-stats" aria-label="Statistiques de BabiGames">
+          <div><strong>8</strong><small>jeux</small></div>
+          <div><strong>3</strong><small>niveaux</small></div>
+          <div><strong>∞</strong><small>rejouabilité</small></div>
+        </div>
+      </section>
+
+      <section class="menu-grid" aria-label="Liste des jeux">
+        <button class="game-card glass" data-game="snake" type="button"><span class="card-icon">🐍</span><span class="card-title">Snake</span><span class="card-desc">Arcade & réflexes</span></button>
+        <button class="game-card glass" data-game="minesweeper" type="button"><span class="card-icon">💣</span><span class="card-title">Démineur</span><span class="card-desc">Logique & tension</span></button>
+        <button class="game-card glass" data-game="chess" type="button"><span class="card-icon">♟️</span><span class="card-title">Échecs</span><span class="card-desc">3 niveaux • chrono</span></button>
+        <button class="game-card glass" data-game="checkers" type="button"><span class="card-icon">🔴</span><span class="card-title">Dames</span><span class="card-desc">3 niveaux • rafles</span></button>
+        <button class="game-card glass" data-game="connect4" type="button"><span class="card-icon">🟡</span><span class="card-title">Puissance 4</span><span class="card-desc">Duel instantané</span></button>
+        <button class="game-card glass" data-game="2048" type="button"><span class="card-icon">🔢</span><span class="card-title">2048</span><span class="card-desc">Combo & stratégie</span></button>
+        <button class="game-card glass" data-game="memory" type="button"><span class="card-icon">🧠</span><span class="card-title">Memory</span><span class="card-desc">Mémoire & vitesse</span></button>
+        <button class="game-card glass" data-game="tetris" type="button"><span class="card-icon">🧱</span><span class="card-title">Tetris</span><span class="card-desc">Chute & combos</span></button>
+      </section>
+    </main>
+
+    <section id="snake-view" class="view hidden" aria-label="Jeu Snake">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="snake-score">0</strong></div><div><small>MEILLEUR</small><strong id="snake-highscore">0</strong></div><button id="snake-reset" class="small-btn" type="button">Rejouer</button></div>
+      <canvas id="snake-canvas" aria-label="Jeu Snake"></canvas>
+      <div class="control-pad snake-pad" aria-label="Commandes Snake">
+        <div></div><button class="control-btn" data-snake-dir="up" type="button" aria-label="Monter">↑</button><div></div>
+        <button class="control-btn" data-snake-dir="left" type="button" aria-label="Aller à gauche">←</button><button class="control-btn center-control" data-snake-dir="pause" type="button" aria-label="Pause">Ⅱ</button><button class="control-btn" data-snake-dir="right" type="button" aria-label="Aller à droite">→</button>
+        <div></div><button class="control-btn" data-snake-dir="down" type="button" aria-label="Descendre">↓</button><div></div>
+      </div>
+      <div class="game-hint" id="snake-hint">Swipe, flèches ou pavé tactile • traverse les bords • mange le 🐁</div>
+    </section>
+
+    <section id="minesweeper-view" class="view hidden" aria-label="Jeu Démineur">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="mines-score">0</strong></div><div><small>MEILLEUR</small><strong id="mines-highscore">0</strong></div><div><small>MINES</small><strong id="mines-left">15</strong></div><button id="reset-minesweeper" class="small-btn" type="button">Rejouer</button></div>
+      <div id="minesweeper-grid" class="mine-grid" aria-label="Grille du démineur"></div>
+      <div id="mines-status" class="game-hint">Touchez une case • appui long / clic droit = drapeau</div>
+    </section>
+
+    <section id="chess-view" class="view hidden board-view" aria-label="Jeu d'échecs">
+      <div class="game-head glass">
+        <div><small>ÉCHECS</small><strong id="chess-status" aria-live="polite">À votre tour</strong></div>
+        <div class="level-switch" data-game="chess" aria-label="Niveau des échecs"><button data-level="easy" type="button">Facile</button><button data-level="medium" class="selected" type="button">Moyen</button><button data-level="hard" type="button">Expert</button></div>
+      </div>
+      <div class="topbar glass"><div><small>SCORE</small><strong id="chess-score">0</strong></div><div><small>MEILLEUR</small><strong id="chess-highscore">0</strong></div><div><small>TOUR</small><strong id="chess-timer">15</strong></div><button id="chess-reset" class="small-btn" type="button">Nouvelle partie</button></div>
+      <div class="board-frame glass"><div id="chess-board" class="board board-8" role="grid" aria-label="Échiquier"></div></div>
+      <div id="chess-hint" class="game-hint">Sélectionnez une pièce blanche puis une case cible.</div>
+    </section>
+
+    <section id="checkers-view" class="view hidden board-view" aria-label="Jeu de dames">
+      <div class="game-head glass">
+        <div><small>DAMES</small><strong id="checkers-status" aria-live="polite">À votre tour</strong></div>
+        <div class="level-switch" data-game="checkers" aria-label="Niveau des dames"><button data-level="easy" type="button">Facile</button><button data-level="medium" class="selected" type="button">Moyen</button><button data-level="hard" type="button">Expert</button></div>
+      </div>
+      <div class="topbar glass"><div><small>SCORE</small><strong id="checkers-score">0</strong></div><div><small>MEILLEUR</small><strong id="checkers-highscore">0</strong></div><div><small>TOUR</small><strong id="checkers-timer">15</strong></div><button id="checkers-reset" class="small-btn" type="button">Nouvelle partie</button></div>
+      <div class="board-frame glass"><div id="checkers-board" class="board board-8" role="grid" aria-label="Damier"></div></div>
+      <div id="checkers-hint" class="game-hint">Une prise obligatoire est signalée en priorité. Les dames peuvent parcourir plusieurs cases.</div>
+    </section>
+
+    <section id="connect4-view" class="view hidden" aria-label="Jeu Puissance 4">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="connect4-score">0</strong></div><div><small>MEILLEUR</small><strong id="connect4-highscore">0</strong></div><div><small>ADVERSAIRE</small><strong id="connect4-status">IA</strong></div><button id="connect4-reset" class="small-btn" type="button">Rejouer</button></div>
+      <div id="connect4-board" class="connect4-board glass" aria-label="Puissance 4"></div>
+      <div id="connect4-hint" class="game-hint">Alignez 4 jetons. Vous jouez 🔴.</div>
+    </section>
+
+    <section id="2048-view" class="view hidden" aria-label="Jeu 2048">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="2048-score">0</strong></div><div><small>MEILLEUR</small><strong id="2048-highscore">0</strong></div><button id="2048-reset" class="small-btn" type="button">Rejouer</button></div>
+      <div id="game-2048" class="game-2048" tabindex="0" role="application" aria-label="Jeu 2048"></div>
+      <div id="2048-status" class="game-hint" aria-live="polite">Flèches, swipe ou boutons • fusionnez les tuiles identiques.</div>
+      <div class="control-pad compact-pad four-pad" aria-label="Commandes 2048">
+        <div></div><button class="control-btn" data-2048-dir="UP" type="button" aria-label="Monter">↑</button><div></div>
+        <button class="control-btn" data-2048-dir="LEFT" type="button" aria-label="Gauche">←</button><button class="control-btn center-control" data-2048-dir="DOWN" type="button" aria-label="Descendre">↓</button><button class="control-btn" data-2048-dir="RIGHT" type="button" aria-label="Droite">→</button>
+        <div></div><div></div><div></div>
+      </div>
+    </section>
+
+    <section id="memory-view" class="view hidden" aria-label="Jeu Memory">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="memory-score">0</strong></div><div><small>MEILLEUR</small><strong id="memory-highscore">0</strong></div><div><small>COUPS</small><strong id="memory-moves">0</strong></div><button id="memory-reset" class="small-btn" type="button">Rejouer</button></div>
+      <div id="memory-board" class="memory-board" aria-label="Memory"></div>
+      <div id="memory-status" class="game-hint" aria-live="polite">Retournez deux cartes. Moins de coups = meilleur score.</div>
+    </section>
+
+    <section id="tetris-view" class="view hidden" aria-label="Jeu Tetris">
+      <div class="topbar glass"><div><small>SCORE</small><strong id="tetris-score">0</strong></div><div><small>MEILLEUR</small><strong id="tetris-highscore">0</strong></div><div><small>NIVEAU</small><strong id="tetris-level">1</strong></div><button id="tetris-reset" class="small-btn" type="button">Rejouer</button></div>
+      <canvas id="tetris-canvas" aria-label="Tetris"></canvas>
+      <div class="control-pad tetris-pad" aria-label="Commandes Tetris">
+        <button class="control-btn" data-tetris-action="left" type="button" aria-label="Déplacer à gauche">←</button><button class="control-btn" data-tetris-action="rotate" type="button" aria-label="Tourner">↻</button><button class="control-btn" data-tetris-action="right" type="button" aria-label="Déplacer à droite">→</button>
+        <button class="control-btn wide-control" data-tetris-action="drop" type="button" aria-label="Chute rapide">▼ Chute</button>
+      </div>
+      <div id="tetris-status" class="game-hint" aria-live="polite">← → déplacer • ↻ tourner • ↓ accélérer • Chute = descente instantanée</div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="win-overlay" class="win-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="win-title">
+    <div class="win-card glass">
+      <div id="win-emoji" class="win-emoji" aria-hidden="true">🏆</div>
+      <h2 id="win-title">Victoire !</h2>
+      <p id="win-text">Excellent.</p>
+      <button id="win-replay" class="primary-btn" type="button">Rejouer</button>
+      <button id="win-menu" class="ghost-btn" type="button">Menu</button>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/snake.js"></script>
+  <script src="js/minesweeper.js"></script>
+  <script src="js/board-games.js"></script>
+  <script src="js/arcade-games.js"></script>
+</body>
+</html>
