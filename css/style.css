@@ -47,3 +47,19 @@ button:disabled{cursor:default}
 @media(max-width:360px){.level-switch button{padding-inline:5px}.game-head{flex-direction:column;align-items:stretch}.game-head .level-switch{justify-content:center}.topbar{flex-wrap:wrap}.topbar>div{min-width:62px}.topbar .small-btn{margin-left:auto}}
 @media(hover:none){.game-card:hover,.memory-card:hover,.connect4-cell:hover,.square:hover .piece{transform:none}.game-card:before{opacity:.35}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.scanlines,.bg-orb{display:none}.wow-spark{display:none}}
+
+/* ========================= AUTH ========================= */
+.header-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.auth-modal{position:fixed;inset:0;z-index:100;background:rgba(4,7,14,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:grid;place-items:center;padding:18px}
+.auth-card{width:min(420px,100%);padding:25px;border-radius:26px;position:relative;box-shadow:0 30px 100px rgba(0,0,0,.5)}
+.auth-card h2{font-size:2rem;margin-top:7px}
+.auth-subtitle{margin-top:6px;color:var(--muted);font-size:.88rem;line-height:1.5}
+.auth-close{position:absolute;right:12px;top:10px;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:1.4rem;color:var(--text)}
+.auth-form{margin-top:16px}
+.auth-field{display:grid;gap:7px;margin-top:12px}
+.auth-field span{font-size:.76rem;font-weight:800;color:var(--muted)}
+.auth-field input{width:100%;padding:12px 13px;border-radius:13px;border:1px solid rgba(255,255,255,.1);background:rgba(3,7,16,.48);color:var(--text);outline:none}
+.auth-field input:focus{border-color:rgba(53,232,255,.55);box-shadow:0 0 0 3px rgba(53,232,255,.1)}
+.auth-status{min-height:1.3em;margin-top:10px;color:var(--muted);font-size:.78rem;line-height:1.4}
+.auth-status.error{color:#ff8a9f}
+.auth-card .primary-btn,.auth-card .ghost-btn{margin-top:12px}
