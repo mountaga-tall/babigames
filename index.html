@@ -22,7 +22,7 @@
     <header class="glass-header">
       <button id="back-btn" class="icon-btn hidden" aria-label="Retour au menu" type="button">←</button>
       <button id="home-btn" class="brand" aria-label="BabiGames — retour au menu" type="button"><span>Babi</span>Games</button>
-      <button id="install-btn" class="small-btn hidden" type="button">Installer</button>
+      <div class="header-actions"><button id="auth-btn" class="small-btn hidden" type="button">Connexion</button><button id="install-btn" class="small-btn hidden" type="button">Installer</button></div>
     </header>
 
     <main id="menu" class="view active" aria-label="Accueil BabiGames">
@@ -120,6 +120,32 @@
     </section>
   </div>
 
+  <div id="auth-modal" class="auth-modal hidden" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <div class="auth-card glass">
+      <button id="auth-close" class="auth-close" type="button" aria-label="Fermer">×</button>
+      <div class="eyebrow">BABI • COMPTE</div>
+      <h2 id="auth-title">Connexion</h2>
+      <p class="auth-subtitle">Synchronise tes meilleurs scores sur tous tes appareils.</p>
+      <form id="auth-form" novalidate>
+        <label id="auth-username-wrap" class="auth-field hidden">
+          <span>Pseudo</span>
+          <input id="auth-username" name="username" autocomplete="username" maxlength="24" placeholder="Ton pseudo">
+        </label>
+        <label class="auth-field">
+          <span>Email</span>
+          <input id="auth-email" name="email" type="email" autocomplete="email" required placeholder="toi@example.com">
+        </label>
+        <label class="auth-field">
+          <span>Mot de passe</span>
+          <input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="8" required placeholder="8 caractères minimum">
+        </label>
+        <button id="auth-submit" class="primary-btn" type="submit">Se connecter</button>
+        <button id="auth-mode" class="ghost-btn" type="button">Créer un compte</button>
+        <p id="auth-status" class="auth-status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div id="win-overlay" class="win-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="win-title">
     <div class="win-card glass">
@@ -131,7 +157,9 @@
     </div>
   </div>
 
+  <script src="js/config.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/snake.js"></script>
   <script src="js/minesweeper.js"></script>
   <script src="js/board-games.js"></script>
