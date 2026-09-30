@@ -39,6 +39,7 @@
       const best = this.getBest(game);
       if (safeScore > best) {
         try { localStorage.setItem(this.scoreKey(game), String(safeScore)); } catch (_) {}
+        window.BabiAuth?.saveBest?.(game, safeScore);
         return safeScore;
       }
       return best;
