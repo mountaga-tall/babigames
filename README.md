@@ -20,3 +20,24 @@ BabiGames est une PWA statique Glassmorphism / Wow Effect comprenant 8 jeux : Sn
 ## Déploiement
 
 Projet 100% statique : HTML, CSS et JavaScript sans dépendance externe. Fonctionne sur GitHub Pages, Netlify, Cloudflare Pages et tout hébergement statique.
+
+## Authentification et scores cloud
+
+BabiGames fonctionne toujours en mode invité et hors-ligne. Une couche d’authentification optionnelle a été ajoutée avec Supabase :
+
+- création de compte et connexion par email/mot de passe ;
+- session gérée par Supabase Auth, sans stocker manuellement de mot de passe ou de token dans localStorage ;
+- synchronisation des meilleurs scores dans public.scores pour les utilisateurs connectés ;
+- profil minimal (public.profiles) avec pseudo ;
+- Row Level Security (RLS) pour qu’un utilisateur ne puisse lire ou modifier que ses propres lignes ;
+- conservation de localStorage comme fallback pour les parties en mode invité/offline.
+
+### Configuration Supabase
+
+1. Créer un projet Supabase.
+2. Exécuter supabase/schema.sql dans le SQL Editor.
+3. Activer l’authentification Email dans Supabase.
+4. Renseigner l’URL du projet et la clé anon/publishable dans js/config.js.
+5. Ne jamais mettre de clé service_role dans le frontend.
+
+L’authentification nécessite Internet. Le mode invité continue de fonctionner hors connexion. Les scores cloud constituent une première couche de synchronisation ; un système anti-triche plus poussé devra valider les résultats de partie côté serveur avant de construire un classement public de confiance.
