@@ -1,4 +1,4 @@
-const CACHE_NAME='babigames-v4';
+const CACHE_NAME='babigames-v5';
 const ASSETS=['./','./index.html','./css/style.css','./js/main.js','./js/config.js','./js/auth.js','./js/snake.js','./js/minesweeper.js','./js/board-games.js','./js/arcade-games.js','./manifest.json','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
