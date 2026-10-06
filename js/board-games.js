@@ -155,7 +155,7 @@
   function bestCheckersSequence(s,depth){const moves=allTurnCheckersSequences(s,'b');if(!moves.length)return null;if(depth<=1)return moves[Math.floor(Math.random()*moves.length)];let best=-Infinity,choice=moves[0];for(const seq of moves){let n=cloneCheckers(s);for(const m of seq)n=applyCheckerStep(n,m);n.turn='r';const v=checkersSearch(n,depth-1,-Infinity,Infinity);if(v>best){best=v;choice=seq;}}return choice;}
   function humanCheckersSequences(from){return allTurnCheckersSequences(checkers.state,'r').filter(seq=>seq[0].from===from);}
   function checkersRender(){
-    const board=document.getElementById('checkers-board');if(!board||!checkers.state)return;board.innerHTML='';const options=checkers.selected!==null?humanCheckersSequences(checkers.selected):[];const targetMap=new Map(options.map(seq=>[seq[0].to,seq[0].capture!==undefined]));
+    const board=document.getElementById('checkers-board');if(!board||!checkers.state)return;board.innerHTML='';const forcedCapture=checkers.mustContinue!==null;const options=checkers.selected!==null?(forcedCapture?checkersCaptureSteps(checkers.state,checkers.selected,'r').map(step=>[step]):humanCheckersSequences(checkers.selected)):[];const targetMap=new Map(options.map(seq=>[seq[0].to,seq[0].capture!==undefined]));
     for(let i=0;i<64;i++){const sq=document.createElement('button');sq.type='button';const [r,c]=rc(i);sq.className=`square ${(r+c)%2?'dark':'light'}`;sq.setAttribute('role','gridcell');sq.setAttribute('aria-label',`Case ${String.fromCharCode(97+c)}${8-r}`);if((r+c)%2===0)sq.disabled=true;if(i===checkers.selected)sq.classList.add('selected');if(targetMap.has(i))sq.classList.add(targetMap.get(i)?'capture':'legal');const p=checkers.state.board[i];if(p){const disk=document.createElement('span');disk.className=`checker-piece ${p.color==='r'?'red':'black'} ${p.king?'king':''}`;sq.appendChild(disk);}sq.addEventListener('click',()=>checkersClick(i));board.appendChild(sq);}
   }
   function checkersClick(i){
@@ -164,7 +164,7 @@
     if(checkers.selected===null){if(p?.color==='r'){const choices=humanCheckersSequences(i);if(choices.length){checkers.selected=i;checkersRender();Babi.vibrate(12);}else Babi.toast('Cette pièce n’a aucun coup légal');}return;}
     if(i===checkers.selected){if(checkers.mustContinue===null){checkers.selected=null;checkersRender();}return;}
     if(p?.color==='r'&&checkers.mustContinue===null){checkers.selected=i;checkersRender();return;}
-    const seq=humanCheckersSequences(checkers.selected).find(x=>x[0].to===i);if(!seq){Babi.toast('Coup illégal');return;}makeCheckersHuman(seq[0]);
+    const seq=checkers.mustContinue!==null?checkersCaptureSteps(checkers.state,checkers.selected,'r').find(step=>step.to===i):humanCheckersSequences(checkers.selected).find(x=>x[0].to===i);if(!seq){Babi.toast('Coup illégal');return;}makeCheckersHuman(Array.isArray(seq)?seq[0]:seq);
   }
   function checkersScore(add){checkers.score=Math.max(0,checkers.score+(Number(add)||0));document.getElementById('checkers-score').textContent=checkers.score;if(checkers.score>checkers.best){checkers.best=Babi.setBest('checkers',checkers.score);document.getElementById('checkers-highscore').textContent=checkers.best;}}
   function startCheckersTimer(){clearInterval(checkers.timer);checkers.timeLeft=LEVELS[checkers.level].seconds;document.getElementById('checkers-timer').textContent=checkers.timeLeft;checkers.timer=setInterval(()=>{if(checkers.gameOver||checkers.state?.turn!=='r'){clearInterval(checkers.timer);return;}checkers.timeLeft--;document.getElementById('checkers-timer').textContent=checkers.timeLeft;if(checkers.timeLeft<=0){clearInterval(checkers.timer);checkers.state.turn='b';checkers.selected=null;checkers.mustContinue=null;checkersRender();document.getElementById('checkers-status').textContent='⏱️ Temps écoulé';Babi.vibrate(150);startCheckersAI();}},1000);}
@@ -173,7 +173,7 @@
   function makeCheckersHuman(step){
     clearInterval(checkers.timer);const wasKing=!!checkers.state.board[step.from]?.king;checkers.state=applyCheckerStep(checkers.state,step);checkers.selected=step.to;checkersScore(10);if(step.capture!==undefined)checkersScore(100);if(!wasKing&&checkers.state.board[step.to]?.king)checkersScore(60);checkersRender();
     const opponentMoves=allTurnCheckersSequences(checkers.state,'b');if(!opponentMoves.length){checkersScore(500);finishCheckers('DAMIER DOMINÉ !',`Victoire • Score ${checkers.score}`,true,'👑');return;}
-    const more=step.capture!==undefined?checkersCaptureSteps(checkers.state,step.to,'r'):[];if(step.capture!==undefined&&more.length){checkers.mustContinue=step.to;checkers.selected=step.to;document.getElementById('checkers-status').textContent='🔥 Rafle continue — à vous';checkersRender();startCheckersTimer();return;}
+    const more=step.capture!==undefined?checkersCaptureSteps(checkers.state,step.to,'r'):[];if(step.capture!==undefined&&more.length){checkers.mustContinue=step.to;checkers.selected=step.to;document.getElementById('checkers-status').textContent='🔥 Rafle continue — choisissez la deuxième prise';checkersRender();startCheckersTimer();return;}
     checkers.selected=null;checkers.mustContinue=null;checkers.state.turn='b';checkersRender();startCheckersAI();
   }
   function playCheckersAI(){
