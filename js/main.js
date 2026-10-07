@@ -7,6 +7,11 @@
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   let currentGame = null;
   let deferredPrompt = null;
+  const pwaCard = document.getElementById('pwa-install-card');
+  const pwaAction = document.getElementById('pwa-install-action');
+  const pwaIosHelp = document.getElementById('pwa-ios-help');
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
   let toastTimer = null;
   let lastFocused = null;
   const gameLabels = {
@@ -155,17 +160,50 @@
     document.dispatchEvent(new CustomEvent(`set-level-${sw.dataset.game}`, { detail: { level: button.dataset.level } }));
   }));
 
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault(); deferredPrompt = e; installBtn.classList.remove('hidden');
-  });
-  installBtn?.addEventListener('click', async () => {
+  function showPwaCard(mode) {
+    if (!pwaCard || isStandalone) return;
+    pwaCard.classList.remove('hidden');
+    const title=document.getElementById('pwa-install-title');
+    const copy=document.getElementById('pwa-install-text');
+    if (mode === 'ios') {
+      title.textContent='Ajouter BabiGames à l’écran d’accueil';
+      copy.textContent='Sur iPhone : ouvre BabiGames dans Safari, touche Partager, puis « Sur l’écran d’accueil » et Ajouter.';
+      pwaAction?.classList.add('hidden');
+      pwaIosHelp?.classList.remove('hidden');
+    } else {
+      title.textContent='Installer BabiGames sur Android';
+      copy.textContent='Touchez Installer pour ajouter BabiGames comme application. Le jeu reste rapide et peut fonctionner hors ligne.';
+      pwaAction?.classList.remove('hidden');
+      pwaIosHelp?.classList.add('hidden');
+    }
+  }
+  async function promptInstall() {
     if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    try { await deferredPrompt.userChoice; } catch (_) {}
+    try {
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+    } catch (_) {}
     deferredPrompt = null;
-    installBtn.classList.add('hidden');
+    installBtn?.classList.add('hidden');
+    pwaCard?.classList.add('hidden');
+  }
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt=e;
+    if (!isStandalone) {
+      installBtn?.classList.remove('hidden');
+      showPwaCard('android');
+    }
   });
-  window.addEventListener('appinstalled', () => installBtn?.classList.add('hidden'));
+  installBtn?.addEventListener('click', promptInstall);
+  pwaAction?.addEventListener('click', promptInstall);
+  pwaIosHelp?.addEventListener('click', () => Babi.toast('Safari → Partager → Sur l’écran d’accueil → Ajouter'));
+  window.addEventListener('appinstalled', () => {
+    installBtn?.classList.add('hidden');
+    pwaCard?.classList.add('hidden');
+    Babi.toast('✅ BabiGames est installé');
+  });
+  if (isIOS && !isStandalone) showPwaCard('ios');
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
@@ -199,7 +237,12 @@
   });
 
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    window.addEventListener('load', async () => {
+      try {
+        const registration=await navigator.serviceWorker.register('./sw.js?v=6');
+        await registration.update();
+      } catch (_) {}
+    });
   }
 
   announceView(document.getElementById('menu'), null);
