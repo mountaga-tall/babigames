@@ -11,6 +11,7 @@
   const pwaAction = document.getElementById('pwa-install-action');
   const pwaIosHelp = document.getElementById('pwa-ios-help');
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/i.test(navigator.userAgent);
   const isStandalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
   let toastTimer = null;
   let lastFocused = null;
@@ -178,7 +179,10 @@
     }
   }
   async function promptInstall() {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      Babi.toast(isAndroid ? 'Android : menu ⋮ → Installer l’application / Ajouter à l’écran d’accueil' : 'Utilisez le menu du navigateur pour ajouter BabiGames à l’écran d’accueil');
+      return;
+    }
     try {
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
@@ -204,6 +208,7 @@
     Babi.toast('✅ BabiGames est installé');
   });
   if (isIOS && !isStandalone) showPwaCard('ios');
+  if (isAndroid && !isStandalone) showPwaCard('android');
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
