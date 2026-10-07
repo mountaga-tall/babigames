@@ -19,9 +19,10 @@
     for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(!board[r][c].mine)board[r][c].n=neighbors(r,c).filter(([rr,cc])=>board[rr][cc].mine).length;
   }
   function init(){
-    clearTimeout(pressTimer); flags=0; ended=false; started=false; score=0; startTime=0;
+    clearTimeout(pressTimer);
+    flags=0; ended=false; started=false; score=0; startTime=0; board=[];
     scoreEl.textContent='0'; leftEl.textContent=String(totalMines); statusEl.textContent='Touchez une case • appui long / clic droit = drapeau';
-    build(); render();
+    render();
   }
   function render(){grid.innerHTML='';grid.style.gridTemplateColumns=`repeat(${cols},1fr)`;for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const cell=document.createElement('button');cell.type='button';cell.className='ms-cell';cell.dataset.r=r;cell.dataset.c=c;cell.setAttribute('aria-label',`Ligne ${r+1}, colonne ${c+1}`);bind(cell,r,c);grid.appendChild(cell);update(r,c);}}
   function bind(el,r,c){
@@ -33,7 +34,29 @@
   function update(r,c){const el=grid.children[r*cols+c],d=board[r][c];el.classList.toggle('revealed',d.revealed);el.classList.toggle('flagged',d.flagged);el.classList.toggle('mine',!!(d.revealed&&d.mine));if(d.revealed){el.textContent=d.mine?'💣':d.n?String(d.n):'';el.setAttribute('aria-label',d.mine?'Mine':'Case révélée');}else{el.textContent=d.flagged?'🚩':'';el.setAttribute('aria-label',d.flagged?'Case marquée d’un drapeau':'Case cachée');}}
   function reveal(r,c){
     if(ended||board[r][c].revealed||board[r][c].flagged)return;
-    if(!started){started=true;startTime=performance.now();build(r,c);render();return reveal(r,c);}
+    if(!started){
+      started=true;
+      startTime=performance.now();
+      build(r,c);
+      const first=board[r][c];
+      first.revealed=true;
+      score+=first.n?5:8;
+      const q=[[r,c]],seen=new Set();
+      while(q.length){
+        const [rr,cc]=q.shift(),id=rr*cols+cc;
+        if(seen.has(id)||!inside(rr,cc))continue;
+        seen.add(id);
+        const d=board[rr][cc];
+        if(d.flagged)continue;
+        if(!d.revealed)d.revealed=true;
+        if(d.n===0)neighbors(rr,cc).forEach(v=>q.push(v));
+      }
+      render();
+      scoreEl.textContent=String(score);
+      checkWin();
+      Babi.vibrate(8);
+      return;
+    }
     const q=[[r,c]],seen=new Set();
     while(q.length){const [rr,cc]=q.shift(),id=rr*cols+cc;if(seen.has(id)||!inside(rr,cc))continue;seen.add(id);const d=board[rr][cc];if(d.revealed||d.flagged)continue;d.revealed=true;score+=d.n?5:8;update(rr,cc);if(d.mine)return explode();if(d.n===0)neighbors(rr,cc).forEach(v=>q.push(v));}
     scoreEl.textContent=String(score);checkWin();Babi.vibrate(8);
