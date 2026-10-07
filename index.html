@@ -6,12 +6,14 @@
   <meta name="theme-color" content="#090b16">
   <meta name="description" content="BabiGames — 8 jeux web rapides, hors-ligne et optimisés mobile.">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BabiGames">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="color-scheme" content="dark">
   <title>BabiGames — 8 jeux</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
   <div class="bg-orb orb-a" aria-hidden="true"></div>
@@ -34,6 +36,18 @@
           <div><strong>8</strong><small>jeux</small></div>
           <div><strong>3</strong><small>niveaux</small></div>
           <div><strong>∞</strong><small>rejouabilité</small></div>
+        </div>
+      </section>
+
+      <section id="pwa-install-card" class="install-card glass hidden" aria-live="polite">
+        <div class="install-card-copy">
+          <div class="eyebrow">BABI • PWA</div>
+          <h2 id="pwa-install-title">Installer BabiGames</h2>
+          <p id="pwa-install-text">Joue comme dans une application, avec accès rapide depuis ton écran d’accueil et un mode hors-ligne.</p>
+        </div>
+        <div class="install-card-actions">
+          <button id="pwa-install-action" class="primary-btn" type="button">Installer</button>
+          <button id="pwa-ios-help" class="ghost-btn hidden" type="button">Voir comment sur iPhone</button>
         </div>
       </section>
 
@@ -157,12 +171,12 @@
     </div>
   </div>
 
-  <script src="js/config.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/snake.js"></script>
-  <script src="js/minesweeper.js"></script>
-  <script src="js/board-games.js"></script>
-  <script src="js/arcade-games.js"></script>
+  <script src="js/config.js?v=6"></script>
+  <script src="js/main.js?v=6"></script>
+  <script src="js/auth.js?v=6"></script>
+  <script src="js/snake.js?v=6"></script>
+  <script src="js/minesweeper.js?v=6"></script>
+  <script src="js/board-games.js?v=6"></script>
+  <script src="js/arcade-games.js?v=6"></script>
 </body>
 </html>
