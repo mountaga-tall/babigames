@@ -125,7 +125,7 @@
     if (Math.max(Math.abs(dx),Math.abs(dy)) < 24) return;
     if (Math.abs(dx) > Math.abs(dy)) setDirection(dx > 0 ? 1 : -1, 0); else setDirection(0, dy > 0 ? 1 : -1);
   }, { passive:true });
-  document.querySelectorAll('[data-snake-dir]').forEach(btn => btn.addEventListener('pointerdown', e => {
+  document.querySelectorAll('[data-snake-dir]').forEach(btn => btn.addEventListener('click', e => {
     e.preventDefault(); const d = btn.dataset.snakeDir;
     if (d === 'pause') togglePause(); else ({up:()=>setDirection(0,-1),down:()=>setDirection(0,1),left:()=>setDirection(-1,0),right:()=>setDirection(1,0)}[d] || (()=>{}))();
   }));
