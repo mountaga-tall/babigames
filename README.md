@@ -15,7 +15,7 @@ BabiGames est une PWA statique Glassmorphism / Wow Effect comprenant 8 jeux : Sn
 - Memory : animation de retournement, score calculé et meilleur score sauvegardé.
 - Tetris : collisions fiables, ghost piece, chute instantanée, niveaux et scoring par lignes.
 - UX : focus clavier, fermeture avec Échap, dialogue de fin de partie, ripple/click feedback, responsive et `prefers-reduced-motion`.
-- Service Worker versionné en `babigames-v6` pour éviter de conserver l'ancienne version en cache.
+- Service Worker versionné en `babigames-v7` pour éviter de conserver l'ancienne version en cache.
 
 ## Déploiement
 
