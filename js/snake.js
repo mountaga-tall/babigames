@@ -33,7 +33,7 @@
     cancelAnimationFrame(raf);
     resize();
     const m = Math.floor(GRID / 2);
-    snake = [{ x: m, y: m + 2 }, { x: m, y: m + 1 }, { x: m, y: m }, { x: m, y: m - 1 }];
+    snake = [{ x: m, y: m - 1 }, { x: m, y: m }, { x: m, y: m + 1 }, { x: m, y: m + 2 }];
     food = freeSpot(); direction = { x: 0, y: -1 }; queue = [];
     score = 0; speed = 120; accumulator = 0; particles = [];
     playing = true; paused = false; last = performance.now();
