@@ -160,7 +160,7 @@
   }
   function checkersClick(i){
     if(checkers.gameOver||checkers.state.turn!=='r')return;const p=checkers.state.board[i];
-    if(checkers.mustContinue!==null&&i!==checkers.mustContinue){if(p?.color==='r'&&i!==checkers.mustContinue)Babi.toast('👑 Continuez la rafle avec la même pièce');return;}
+    if(checkers.mustContinue!==null&&i!==checkers.mustContinue&&!checkers.continuationMoves.some(step=>step.to===i)){if(p?.color==='r')Babi.toast('👑 Continuez la rafle avec la même pièce');return;}
     if(checkers.selected===null){if(p?.color==='r'){const choices=humanCheckersSequences(i);if(choices.length){checkers.selected=i;checkersRender();Babi.vibrate(12);}else Babi.toast('Cette pièce n’a aucun coup légal');}return;}
     if(i===checkers.selected){if(checkers.mustContinue===null){checkers.selected=null;checkersRender();}return;}
     if(p?.color==='r'&&checkers.mustContinue===null){checkers.selected=i;checkersRender();return;}
